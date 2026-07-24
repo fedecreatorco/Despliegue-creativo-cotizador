@@ -171,6 +171,7 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; }
 @media (min-width: 640px) { .tiers { grid-template-columns: repeat(3, 1fr); } }
 .tier {
   position: relative; text-align: left; cursor: pointer; font-family: var(--sans);
+  color: var(--ink);
   display: flex; flex-direction: column; gap: 10px;
   padding: 22px 18px; border-radius: 16px;
   background: rgba(255,255,255,0.03); border: 1px solid var(--line);
@@ -215,6 +216,7 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; }
 @media (max-width: 420px) { .presets { grid-template-columns: 1fr 1fr; } }
 .preset {
   position: relative; cursor: pointer; font-family: var(--sans); text-align: center;
+  color: var(--ink);
   display: flex; flex-direction: column; gap: 3px; padding: 14px 8px; border-radius: 12px;
   background: rgba(255,255,255,0.03); border: 1px solid var(--line); transition: all .18s ease;
 }
