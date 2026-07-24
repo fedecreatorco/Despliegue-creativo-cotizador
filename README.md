@@ -62,10 +62,11 @@ descuentos, edita solo esos valores; el resto se recalcula solo.
 ### Modo · Piezas individuales (à la carte)
 
 - **Static ads** — bloques de 5, **$30 por bloque** ($6 c/u).
-- **Videos 15–30 s** — $50 c/u, con descuento **ligero**: 3–9 → 5% · 10+ → 10%.
-- **Edición profesional** (opcional) — $40 c/u: desde 5 → 15% · desde 10 → 20%.
+- **Videos 15–30 s** — $50 c/u, con descuento por volumen (siempre bajo el despliegue):
+  3–4 → 8% · 5–9 → 12% · 10–19 → 20% · 20–29 → 25% · 30+ → 30%.
+- **Edición profesional** (opcional) — $40 c/u: desde 5 → 20% · desde 10 → 25%.
 - Sin análisis ni estrategia de funnel. Un *nudge* compara en vivo con el despliegue.
-- Ejemplo: 10 static + 20 videos = **$960** (vs. $660 en despliegue → ahorras $300).
+- Ejemplo: 10 static + 20 videos = **$810** (vs. $660 en despliegue → ahorras $150).
 
 ### Común
 

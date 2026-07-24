@@ -33,10 +33,17 @@ const MODOS = {
     paso:    { static: 5, video: 1, edicion: 1 },
     hasEdicion: true,
     hasFunnel:  false,
-    // VIDEO (descuento ligero): 3→5% · 10→10%
-    descVideo:   (v) => v < 3 ? 0 : v < 10 ? 0.05 : 0.10,
-    // EDICIÓN: 5→15% · 10→20%
-    descEdicion: (e) => e < 5 ? 0 : e < 10 ? 0.15 : 0.20,
+    // VIDEO (descuento ligero, siempre por debajo del despliegue):
+    // 3→8% · 5→12% · 10→20% · 20→25% · 30→30%
+    descVideo: (v) =>
+      v < 3  ? 0    :
+      v < 5  ? 0.08 :
+      v < 10 ? 0.12 :
+      v < 20 ? 0.20 :
+      v < 30 ? 0.25 :
+      0.30,
+    // EDICIÓN: 5→20% · 10→25%
+    descEdicion: (e) => e < 5 ? 0 : e < 10 ? 0.20 : 0.25,
   },
   whatsapp: "12015528075",   // +1 (201) 552-8075
 };
