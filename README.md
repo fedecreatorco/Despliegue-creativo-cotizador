@@ -3,9 +3,18 @@
 Página web informativa (tipo cotizador) para el servicio de **despliegue creativo para Meta y TikTok Ads**.
 El cliente arma su paquete y ve el precio en tiempo real.
 
-## Qué cotiza
+## Dos modos de cotización (pestañas)
 
-Un despliegue creativo incluye:
+Debajo del subtítulo del hero hay dos pestañas:
+
+1. **Despliegue creativo** — el producto completo. Incluye **análisis de audiencia +
+   producto/servicio** y **estrategia de funnel** (TOFU · MOFU · BOFU) gratis, con
+   descuentos por volumen agresivos. Es la mejor relación precio-beneficio.
+2. **Piezas individuales** — à la carte, para quien solo necesita unas piezas (videos,
+   static ads o los dos). Sin análisis ni estrategia; descuentos por volumen ligeros.
+   Un *nudge* en vivo muestra cuánto ahorraría el cliente pasando al despliegue.
+
+### Despliegue creativo incluye
 
 - **Análisis de audiencia + producto/servicio** (incluido)
 - **Estrategia de funnel** TOFU · MOFU · BOFU (incluido)
@@ -14,14 +23,16 @@ Un despliegue creativo incluye:
   - **Videos 15–30 s** — mínimo 20
 - **Edición profesional** (opcional) — posproducción de alto valor: motion graphics,
   subtítulos premium, b-rolls y efectos de sonido/visuales. Requiere material de la marca.
-- Opción de **sumar más piezas**, con cálculo automático del total, los descuentos por
-  volumen y el reparto por funnel.
+- Reparto automático por funnel y cálculo del total en tiempo real.
 - **CTA "Realizar pedido"** → arma el pedido con todas las especificaciones y abre WhatsApp.
 
 ## Modelo de precios
 
-Todo el pricing vive en un solo objeto `CONFIG` al inicio de [`script.js`](script.js).
-Para ajustar precios, mínimos o descuentos, edita solo esos valores.
+Todo el pricing vive en el objeto `MODOS` al inicio de [`script.js`](script.js),
+separado por modo (`despliegue` e `individual`). Para ajustar precios, mínimos o
+descuentos, edita solo esos valores; el resto se recalcula solo.
+
+### Modo · Despliegue creativo (mejor precio-beneficio)
 
 **Static ads** — bloques de 5, **$30 por bloque** ($6 c/u) · mínimo 10.
 
@@ -34,7 +45,7 @@ Para ajustar precios, mínimos o descuentos, edita solo esos valores.
 | 20–29 | 35% |
 | +10 videos | +5% (tope 60%) |
 
-**Edición profesional** — $40 c/u:
+**Edición profesional** (opcional) — $40 c/u:
 
 | Cantidad | Descuento |
 |---|---|
@@ -42,10 +53,19 @@ Para ajustar precios, mínimos o descuentos, edita solo esos valores.
 | 10+ | 20% |
 
 - Mínimos del paquete base: 10 static + 20 videos → **$710 USD** (video ya con 35% off).
-- Reparto funnel: TOFU 50% · MOFU 30% · BOFU 20%.
-- WhatsApp de pedidos: `+1 (201) 552-8075` (`CONFIG.whatsapp`).
+- Incluye análisis + estrategia de funnel (TOFU 50% · MOFU 30% · BOFU 20%).
 
-> El análisis de audiencia y la estrategia de funnel se muestran como **incluidos** (valor agregado del paquete), no como línea con precio.
+### Modo · Piezas individuales (à la carte)
+
+- **Static ads** — bloques de 5, **$30 por bloque** ($6 c/u).
+- **Videos 15–30 s** — $50 c/u, con descuento **ligero**: 10+ → 5% · 20+ → 10% · 40+ → 15%.
+- Sin análisis ni estrategia de funnel. Un *nudge* compara en vivo con el despliegue.
+- Ejemplo: 10 static + 20 videos = **$960** (vs. $710 en despliegue).
+
+### Común
+
+- WhatsApp de pedidos: `+1 (201) 552-8075` (`MODOS.whatsapp`).
+- El análisis y la estrategia se muestran como **incluidos** solo en el modo despliegue.
 
 ## Estructura
 
