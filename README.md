@@ -14,6 +14,9 @@ Debajo del subtítulo del hero hay dos pestañas:
    static ads o los dos). Sin análisis ni estrategia; descuentos por volumen ligeros.
    Un *nudge* en vivo muestra cuánto ahorraría el cliente pasando al despliegue.
 
+Cada línea del resumen muestra el **precio por pieza** (efectivo, ya con descuento) y
+junto al total aparece el **promedio por pieza**, para que el comprador analice sin calculadora.
+
 ### Despliegue creativo incluye
 
 - **Análisis de audiencia + producto/servicio** (incluido)
@@ -21,16 +24,23 @@ Debajo del subtítulo del hero hay dos pestañas:
 - **Generación y despliegue** — volumen con calidad y edición básica:
   - **Static ads** — mínimo 10, en bloques de 5
   - **Videos 15–30 s** — mínimo 20
-- **Edición profesional** (opcional) — posproducción de alto valor: motion graphics,
-  subtítulos premium, b-rolls y efectos de sonido/visuales. Requiere material de la marca.
 - Reparto automático por funnel y cálculo del total en tiempo real.
 - **CTA "Realizar pedido"** → arma el pedido con todas las especificaciones y abre WhatsApp.
+
+### Piezas individuales incluye
+
+- **Static ads** y **Videos 15–30 s** sueltos (à la carte).
+- **Edición profesional** (opcional, campo destacado) — posproducción de alto valor:
+  motion graphics, subtítulos premium, b-rolls y efectos de sonido/visuales. Requiere
+  material de la marca.
 
 ## Modelo de precios
 
 Todo el pricing vive en el objeto `MODOS` al inicio de [`script.js`](script.js),
 separado por modo (`despliegue` e `individual`). Para ajustar precios, mínimos o
 descuentos, edita solo esos valores; el resto se recalcula solo.
+
+> Regla: los descuentos del **despliegue siempre superan** a los del individual, en cada cantidad.
 
 ### Modo · Despliegue creativo (mejor precio-beneficio)
 
@@ -40,27 +50,22 @@ descuentos, edita solo esos valores; el resto se recalcula solo.
 
 | Cantidad | Descuento |
 |---|---|
-| 5–9 | 15% |
-| 10–19 | 30% |
-| 20–29 | 35% |
+| 3–4 | 10% |
+| 5–9 | 20% |
+| 10–19 | 35% |
+| 20–29 | 40% |
 | +10 videos | +5% (tope 60%) |
 
-**Edición profesional** (opcional) — $40 c/u:
-
-| Cantidad | Descuento |
-|---|---|
-| 5–9 | 15% |
-| 10+ | 20% |
-
-- Mínimos del paquete base: 10 static + 20 videos → **$710 USD** (video ya con 35% off).
+- Mínimos del paquete base: 10 static + 20 videos → **$660 USD** (video ya con 40% off).
 - Incluye análisis + estrategia de funnel (TOFU 50% · MOFU 30% · BOFU 20%).
 
 ### Modo · Piezas individuales (à la carte)
 
 - **Static ads** — bloques de 5, **$30 por bloque** ($6 c/u).
-- **Videos 15–30 s** — $50 c/u, con descuento **ligero**: 10+ → 5% · 20+ → 10% · 40+ → 15%.
+- **Videos 15–30 s** — $50 c/u, con descuento **ligero**: 3–9 → 5% · 10+ → 10%.
+- **Edición profesional** (opcional) — $40 c/u: desde 5 → 15% · desde 10 → 20%.
 - Sin análisis ni estrategia de funnel. Un *nudge* compara en vivo con el despliegue.
-- Ejemplo: 10 static + 20 videos = **$960** (vs. $710 en despliegue).
+- Ejemplo: 10 static + 20 videos = **$960** (vs. $660 en despliegue → ahorras $300).
 
 ### Común
 

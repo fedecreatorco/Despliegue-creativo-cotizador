@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Cotizador · Despliegue Creativo para Ads — Ecom Labs Studio</title>
-  <meta name="description" content="Cotiza tu despliegue creativo para Meta y TikTok Ads: análisis de audiencia y producto, más una serie de piezas de video y static ads para todo el funnel (TOFU · MOFU · BOFU). O cotiza piezas individuales à la carte." />
+  <meta name="description" content="Cotiza tu despliegue creativo para Meta y TikTok Ads: análisis de audiencia y producto, más una serie de piezas de video y static ads para todo el funnel (TOFU · MOFU · BOFU). O cotiza piezas individuales à la carte y edición profesional." />
   <link rel="icon" href="assets/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -45,7 +45,7 @@
       </button>
       <button class="tab" data-tab="individual" role="tab" aria-selected="false">
         <span class="tab__title">Piezas individuales</span>
-        <span class="tab__desc">Videos y static ads sueltos, à la carte</span>
+        <span class="tab__desc">Videos, static ads y edición pro, à la carte</span>
       </button>
     </div>
   </section>
@@ -82,7 +82,7 @@
             <div class="counter">
               <div class="counter__info">
                 <span class="counter__name">Static ads</span>
-                <span class="counter__note">Bloques de 5 · <span data-fill="static-bloque"></span> por bloque · mínimo <span data-fill="static-min"></span></span>
+                <span class="counter__note">Bloques de 5 · <span data-fill="static-bloque"></span> por bloque (<span data-fill="static-unit"></span> c/u) · mínimo <span data-fill="static-min"></span></span>
               </div>
               <div class="stepper" data-stepper="static">
                 <button class="step" data-dir="-1" aria-label="Quitar static">–</button>
@@ -106,25 +106,7 @@
 
           <div class="card">
             <div class="card__head">
-              <h2>3 · Edición profesional <span class="tag tag--soft">Opcional</span></h2>
-              <p class="muted">Posproducción de alto valor percibido: <strong>motion graphics</strong>, subtítulos premium, b-rolls y efectos de sonido y visuales. Requiere material de la marca.</p>
-            </div>
-            <div class="counter">
-              <div class="counter__info">
-                <span class="counter__name">Ediciones pro</span>
-                <span class="counter__note"><span data-fill="edicion"></span> c/u · desde 5 piezas −15% · desde 10 −20%</span>
-              </div>
-              <div class="stepper" data-stepper="edicion">
-                <button class="step" data-dir="-1" aria-label="Quitar edición">–</button>
-                <input class="step__val" type="text" inputmode="numeric" value="0" data-qty="edicion" aria-label="Cantidad de ediciones" />
-                <button class="step" data-dir="1" aria-label="Agregar edición">+</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card__head">
-              <h2>4 · Distribución por funnel</h2>
+              <h2>3 · Distribución por funnel</h2>
               <p class="muted">Repartimos tus <strong data-total-pieces></strong> piezas de despliegue en las tres etapas del embudo.</p>
             </div>
             <div class="funnel">
@@ -162,23 +144,26 @@
                 <span class="pill">Incluido</span>
               </li>
               <li class="line" data-line="static">
-                <span><b data-sum-qty="static">10</b> static ads</span>
+                <span class="line__label">
+                  <span class="line__name"><b data-sum-qty="static">10</b> static ads</span>
+                  <small class="line__unit" data-unit="static"></small>
+                </span>
                 <span class="amt"><span data-sum-amount="static">$60</span></span>
               </li>
               <li class="line" data-line="video">
-                <span><b data-sum-qty="video">20</b> videos 15–30 s <span class="off" data-off="video" hidden></span></span>
-                <span class="amt"><s data-gross="video" hidden></s><span data-sum-amount="video">$650</span></span>
-              </li>
-              <li class="line" data-line="edicion" hidden>
-                <span><b data-sum-qty="edicion">0</b> ediciones pro <span class="off" data-off="edicion" hidden></span></span>
-                <span class="amt"><s data-gross="edicion" hidden></s><span data-sum-amount="edicion">$0</span></span>
+                <span class="line__label">
+                  <span class="line__name"><b data-sum-qty="video">20</b> videos 15–30 s <span class="off" data-off="video" hidden></span></span>
+                  <small class="line__unit" data-unit="video"></small>
+                </span>
+                <span class="amt"><s data-gross="video" hidden></s><span data-sum-amount="video">$600</span></span>
               </li>
             </ul>
             <div class="total">
               <span>Total del despliegue</span>
-              <strong data-total>$710</strong>
+              <strong data-total>$660</strong>
             </div>
-            <p class="perpiece" data-ahorro-wrap hidden>Ahorras <b data-ahorro>$0</b> por volumen</p>
+            <p class="perpiece" data-perpiece-wrap>Promedio <b data-perpiece></b> por pieza · <span data-total-pieces></span> piezas</p>
+            <p class="ahorro" data-ahorro-wrap hidden>Ahorras <b data-ahorro>$0</b> por volumen</p>
             <a class="btn btn--cta" href="#" data-cta>
               <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M17.5 14.4c-.3-.15-1.7-.85-2-.95-.26-.1-.45-.15-.64.15-.19.28-.73.94-.9 1.13-.16.19-.33.21-.62.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.29-.02-.45.13-.6.14-.13.3-.34.44-.51.15-.17.2-.29.3-.48.1-.19.05-.36-.02-.51-.08-.15-.64-1.55-.88-2.12-.23-.55-.47-.48-.64-.49h-.55c-.19 0-.5.07-.76.36-.26.29-1 .98-1 2.38 0 1.4 1.02 2.76 1.17 2.95.14.19 2.01 3.08 4.88 4.32.68.29 1.21.47 1.63.6.68.22 1.31.19 1.8.11.55-.08 1.7-.69 1.94-1.36.24-.67.24-1.24.17-1.36-.07-.12-.26-.19-.55-.34zM12 2A10 10 0 0 0 3.5 17.2L2 22l4.9-1.5A10 10 0 1 0 12 2z"/></svg>
               Realizar pedido
@@ -219,7 +204,7 @@
             <div class="counter">
               <div class="counter__info">
                 <span class="counter__name">Static ads</span>
-                <span class="counter__note">Bloques de 5 · <span data-fill="static-bloque"></span> por bloque</span>
+                <span class="counter__note">Bloques de 5 · <span data-fill="static-bloque"></span> por bloque (<span data-fill="static-unit"></span> c/u)</span>
               </div>
               <div class="stepper" data-stepper="static">
                 <button class="step" data-dir="-1" aria-label="Quitar static">–</button>
@@ -231,7 +216,7 @@
             <div class="counter">
               <div class="counter__info">
                 <span class="counter__name">Videos <span class="tag">15–30 s</span></span>
-                <span class="counter__note"><span data-fill="video"></span> c/u · descuento ligero desde 10 piezas</span>
+                <span class="counter__note"><span data-fill="video"></span> c/u · descuento desde 3 piezas · más desde 10</span>
               </div>
               <div class="stepper" data-stepper="video">
                 <button class="step" data-dir="-1" aria-label="Quitar video">–</button>
@@ -243,6 +228,32 @@
             <p class="hint" data-empty-hint>Agrega al menos una pieza para cotizar.</p>
           </div>
 
+          <!-- Edición profesional (campo destacado) -->
+          <div class="card card--feature">
+            <div class="feature-badge">Posproducción profesional</div>
+            <div class="card__head">
+              <h2>3 · Edición profesional <span class="tag tag--soft">Opcional</span></h2>
+              <p class="muted">Sube el valor percibido de tus videos. Requiere material de la marca.</p>
+            </div>
+            <ul class="perks">
+              <li>Motion graphics</li>
+              <li>Subtítulos de alto valor percibido</li>
+              <li>B-rolls</li>
+              <li>Efectos de sonido y visuales</li>
+            </ul>
+            <div class="counter">
+              <div class="counter__info">
+                <span class="counter__name">Ediciones pro</span>
+                <span class="counter__note"><span data-fill="edicion"></span> c/u · desde 5 piezas −15% · desde 10 −20%</span>
+              </div>
+              <div class="stepper" data-stepper="edicion">
+                <button class="step" data-dir="-1" aria-label="Quitar edición">–</button>
+                <input class="step__val" type="text" inputmode="numeric" value="0" data-qty="edicion" aria-label="Cantidad de ediciones" />
+                <button class="step" data-dir="1" aria-label="Agregar edición">+</button>
+              </div>
+            </div>
+          </div>
+
         </div>
 
         <!-- Resumen -->
@@ -252,22 +263,36 @@
             <p class="summary__note">Piezas sueltas · no incluye análisis ni estrategia de funnel.</p>
             <ul class="lines">
               <li class="line" data-line="static" hidden>
-                <span><b data-sum-qty="static">0</b> static ads</span>
+                <span class="line__label">
+                  <span class="line__name"><b data-sum-qty="static">0</b> static ads</span>
+                  <small class="line__unit" data-unit="static"></small>
+                </span>
                 <span class="amt"><span data-sum-amount="static">$0</span></span>
               </li>
               <li class="line" data-line="video" hidden>
-                <span><b data-sum-qty="video">0</b> videos 15–30 s <span class="off" data-off="video" hidden></span></span>
+                <span class="line__label">
+                  <span class="line__name"><b data-sum-qty="video">0</b> videos 15–30 s <span class="off" data-off="video" hidden></span></span>
+                  <small class="line__unit" data-unit="video"></small>
+                </span>
                 <span class="amt"><s data-gross="video" hidden></s><span data-sum-amount="video">$0</span></span>
+              </li>
+              <li class="line" data-line="edicion" hidden>
+                <span class="line__label">
+                  <span class="line__name"><b data-sum-qty="edicion">0</b> ediciones pro <span class="off" data-off="edicion" hidden></span></span>
+                  <small class="line__unit" data-unit="edicion"></small>
+                </span>
+                <span class="amt"><s data-gross="edicion" hidden></s><span data-sum-amount="edicion">$0</span></span>
               </li>
             </ul>
             <div class="total">
               <span>Total</span>
               <strong data-total>$0</strong>
             </div>
-            <p class="perpiece" data-ahorro-wrap hidden>Ahorras <b data-ahorro>$0</b> por volumen</p>
+            <p class="perpiece" data-perpiece-wrap hidden>Promedio <b data-perpiece></b> por pieza · <span data-total-pieces></span> piezas de contenido</p>
+            <p class="ahorro" data-ahorro-wrap hidden>Ahorras <b data-ahorro>$0</b> por volumen</p>
 
             <div class="nudge" data-nudge hidden>
-              <p>Las mismas piezas en un <b>Despliegue creativo</b> cuestan <b data-nudge-total></b> e incluyen análisis + estrategia de funnel. Ahorrarías <b data-nudge-ahorro></b>.</p>
+              <p>Los videos + static en un <b>Despliegue creativo</b> cuestan <b data-nudge-total></b> e incluyen análisis + estrategia de funnel. Ahorrarías <b data-nudge-ahorro></b>.</p>
               <button class="nudge__btn" data-goto-despliegue>Ver despliegue creativo →</button>
             </div>
 

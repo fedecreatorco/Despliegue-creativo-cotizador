@@ -3,32 +3,40 @@
    -------------------------------------------------------------------
    Dos modos de cotización:
      · despliegue  → producto completo (análisis + estrategia + volumen)
-     · individual  → piezas sueltas à la carte (mejor precio en despliegue)
+     · individual  → piezas sueltas à la carte + edición profesional
 
    MODELO DE PRECIOS (editable). Cambia solo estos valores; el resto se
    recalcula solo. Todos los importes en USD.
+
+   Regla: los descuentos del despliegue SIEMPRE superan a los del
+   individual, para que el despliegue sea la mejor relación precio-beneficio.
    =================================================================== */
 const MODOS = {
   despliegue: {
-    precio:  { static: 6, video: 50, edicion: 40 },  // static: bloque de 5 = $30
-    minimo:  { static: 10, video: 20, edicion: 0 },
-    paso:    { static: 5,  video: 1,  edicion: 1 },
-    hasEdicion: true,
+    precio:  { static: 6, video: 50 },   // static: bloque de 5 = $30
+    minimo:  { static: 10, video: 20 },
+    paso:    { static: 5,  video: 1 },
+    hasEdicion: false,
     hasFunnel:  true,
     funnel: { tofu: 0.50, mofu: 0.30, bofu: 0.20 },
-    // Descuento por volumen en VIDEO: 5→15% · 10→30% · +5% por cada 10 (tope 60%)
-    descVideo:   (v) => v < 5 ? 0 : v < 10 ? 0.15 : Math.min(0.30 + Math.floor((v - 10) / 10) * 0.05, 0.60),
-    // Descuento en EDICIÓN: 5→15% · 10→20%
-    descEdicion: (e) => e < 5 ? 0 : e < 10 ? 0.15 : 0.20,
+    // VIDEO: 3→10% · 5→20% · 10→35% · 20→40% · +5% por cada 10 (tope 60%)
+    descVideo: (v) =>
+      v < 3  ? 0    :
+      v < 5  ? 0.10 :
+      v < 10 ? 0.20 :
+      v < 20 ? 0.35 :
+      Math.min(0.40 + Math.floor((v - 20) / 10) * 0.05, 0.60),
   },
   individual: {
-    precio:  { static: 6, video: 50 },
-    minimo:  { static: 0, video: 0 },
-    paso:    { static: 5, video: 1 },
-    hasEdicion: false,
+    precio:  { static: 6, video: 50, edicion: 40 },
+    minimo:  { static: 0, video: 0, edicion: 0 },
+    paso:    { static: 5, video: 1, edicion: 1 },
+    hasEdicion: true,
     hasFunnel:  false,
-    // Descuento ligero (à la carte): 10→5% · 20→10% · 40→15%
-    descVideo:   (v) => v < 10 ? 0 : v < 20 ? 0.05 : v < 40 ? 0.10 : 0.15,
+    // VIDEO (descuento ligero): 3→5% · 10→10%
+    descVideo:   (v) => v < 3 ? 0 : v < 10 ? 0.05 : 0.10,
+    // EDICIÓN: 5→15% · 10→20%
+    descEdicion: (e) => e < 5 ? 0 : e < 10 ? 0.15 : 0.20,
   },
   whatsapp: "12015528075",   // +1 (201) 552-8075
 };
@@ -36,8 +44,17 @@ const MODOS = {
 /* ---------- Helpers ---------- */
 const $  = (s, ctx = document) => ctx.querySelector(s);
 const $$ = (s, ctx = document) => Array.from(ctx.querySelectorAll(s));
-const money = (n) => "$" + Math.round(n).toLocaleString("en-US");
 const pctTxt = (d) => "–" + Math.round(d * 100) + "%";
+
+/* Formato de dinero con centavos solo cuando hacen falta ($32.50, $60) */
+function money(n) {
+  const r = Math.round(n * 100) / 100;
+  return "$" + r.toLocaleString("en-US", {
+    minimumFractionDigits: (r % 1 ? 2 : 0),
+    maximumFractionDigits: 2,
+  });
+}
+const porPieza = (net, qty) => qty > 0 ? money(net / qty) + " c/u" : "";
 
 /* Cálculo de precios para un modo dado y unas cantidades. Reutilizable
    (también lo usa el "nudge" del panel individual). */
@@ -58,7 +75,7 @@ function precios(modo, q) {
 
   const total  = staticNet + videoNet + edNet;
   const ahorro = (videoGross - videoNet) + (edGross - edNet);
-  const piezas = (q.static || 0) + (q.video || 0);
+  const piezas = (q.static || 0) + (q.video || 0);   // piezas de contenido
   return { staticNet, videoGross, videoDisc, videoNet,
            edGross, edDisc, edNet, total, ahorro, piezas };
 }
@@ -87,13 +104,13 @@ function crearPanel(root, modo, nombreModo) {
   $$('[data-fill]', root).forEach(el => {
     const k = el.dataset.fill;
     if (k === "static-bloque") el.textContent = money(modo.precio.static * modo.paso.static);
+    if (k === "static-unit")   el.textContent = money(modo.precio.static);
     if (k === "static-min")    el.textContent = modo.minimo.static;
     if (k === "video")         el.textContent = money(modo.precio.video);
     if (k === "video-min")     el.textContent = modo.minimo.video;
     if (k === "edicion")       el.textContent = money(modo.precio.edicion);
   });
 
-  /* ---- Utilidades de DOM dentro del panel ---- */
   const q  = (s) => $(s, root);
   const qq = (s) => $$(s, root);
 
@@ -109,6 +126,10 @@ function crearPanel(root, modo, nombreModo) {
       if (strike) strike.hidden = true;
     }
   }
+  function setUnit(kind, net, qty) {
+    const el = q(`[data-unit="${kind}"]`);
+    if (el) el.textContent = porPieza(net, qty);
+  }
 
   function render() {
     const c = precios(modo, state);
@@ -122,11 +143,13 @@ function crearPanel(root, modo, nombreModo) {
     // Static
     const sAmt = q('[data-sum-amount="static"]');
     if (sAmt) sAmt.textContent = money(c.staticNet);
+    setUnit("static", c.staticNet, state.static);
 
     // Video
     const vAmt = q('[data-sum-amount="video"]');
     if (vAmt) vAmt.textContent = money(c.videoNet);
     setLineaDesc("video", c.videoDisc, c.videoGross);
+    setUnit("video", c.videoNet, state.video);
 
     // Edición
     if (modo.hasEdicion) {
@@ -135,21 +158,31 @@ function crearPanel(root, modo, nombreModo) {
         rowE.hidden = false;
         q('[data-sum-amount="edicion"]').textContent = money(c.edNet);
         setLineaDesc("edicion", c.edDisc, c.edGross);
+        setUnit("edicion", c.edNet, state.edicion);
       } else {
         rowE.hidden = true;
       }
     }
 
-    // Líneas que se ocultan si están en 0 (modo individual)
+    // Líneas static/video que se ocultan en 0 (modo individual)
     ["static", "video"].forEach(k => {
       const row = q(`[data-line="${k}"]`);
-      if (row && row.hasAttribute("hidden") !== undefined && modo.minimo[k] === 0) {
-        row.hidden = state[k] <= 0;
-      }
+      if (row && modo.minimo[k] === 0) row.hidden = state[k] <= 0;
     });
 
-    // Total y ahorro
+    // Total, precio por pieza y ahorro
     q('[data-total]').textContent = money(c.total);
+    const contenidoNet = c.staticNet + c.videoNet;
+    const ppWrap = q('[data-perpiece-wrap]');
+    if (ppWrap) {
+      if (c.piezas > 0) {
+        ppWrap.hidden = false;
+        q('[data-perpiece]').textContent = money(contenidoNet / c.piezas);
+        qq('[data-total-pieces]').forEach(el => el.textContent = c.piezas);
+      } else ppWrap.hidden = true;
+    } else {
+      qq('[data-total-pieces]').forEach(el => el.textContent = c.piezas);
+    }
     const ahorroWrap = q('[data-ahorro-wrap]');
     if (ahorroWrap) {
       if (c.ahorro > 0) { ahorroWrap.hidden = false; q('[data-ahorro]').textContent = money(c.ahorro); }
@@ -164,17 +197,18 @@ function crearPanel(root, modo, nombreModo) {
         q(`[data-funnel="${k}"]`).textContent = r[k];
         q(`[data-funnel-bar="${k}"]`).style.width = (r[k] / max * 100) + "%";
       });
-      qq('[data-total-pieces]').forEach(el => el.textContent = c.piezas);
     }
 
-    // Nudge (individual): comparar contra el despliegue
+    // Nudge (individual): comparar SOLO video + static contra el despliegue
     const nudge = q('[data-nudge]');
     if (nudge) {
-      const d = precios(MODOS.despliegue, state);
-      const ahorra = c.total - d.total;
+      const base = { static: state.static, video: state.video };
+      const ind = precios(modo, base);
+      const des = precios(MODOS.despliegue, base);
+      const ahorra = ind.total - des.total;
       if (c.piezas > 0 && ahorra > 0) {
         nudge.hidden = false;
-        q('[data-nudge-total]').textContent  = money(d.total);
+        q('[data-nudge-total]').textContent  = money(des.total);
         q('[data-nudge-ahorro]').textContent = money(ahorra);
       } else {
         nudge.hidden = true;
@@ -185,9 +219,9 @@ function crearPanel(root, modo, nombreModo) {
     const emptyHint = q('[data-empty-hint]');
     const cta = q('[data-cta]');
     if (modo.minimo.static === 0 && modo.minimo.video === 0) {
-      const vacio = c.piezas <= 0;
+      const vacio = (state.static + state.video + state.edicion) <= 0;
       if (emptyHint) emptyHint.style.display = vacio ? "" : "none";
-      if (cta) { cta.classList.toggle("btn--disabled", vacio); }
+      if (cta) cta.classList.toggle("btn--disabled", vacio);
     }
 
     // Botones "–" deshabilitados en el mínimo
@@ -217,17 +251,17 @@ function crearPanel(root, modo, nombreModo) {
       : "Hola Ecom Labs 👋 Quiero realizar este pedido de PIEZAS INDIVIDUALES:");
     L.push("");
     L.push("📱 Plataforma: " + state.platform);
-    if (state.static > 0) L.push("🎨 Static ads: " + state.static + "  (" + money(c.staticNet) + ")");
+    if (state.static > 0) L.push("🎨 Static ads: " + state.static + " (" + money(c.staticNet / state.static) + " c/u) → " + money(c.staticNet));
     if (state.video > 0) {
       let vl = "🎬 Videos 15–30 s: " + state.video;
-      if (c.videoDisc > 0) vl += "  " + pctTxt(c.videoDisc);
-      vl += "  (" + money(c.videoNet) + ")";
+      if (c.videoDisc > 0) vl += " " + pctTxt(c.videoDisc);
+      vl += " (" + money(c.videoNet / state.video) + " c/u) → " + money(c.videoNet);
       L.push(vl);
     }
     if (modo.hasEdicion && state.edicion > 0) {
       let el = "✨ Ediciones profesionales: " + state.edicion;
-      if (c.edDisc > 0) el += "  " + pctTxt(c.edDisc);
-      el += "  (" + money(c.edNet) + ")";
+      if (c.edDisc > 0) el += " " + pctTxt(c.edDisc);
+      el += " (" + money(c.edNet / state.edicion) + " c/u) → " + money(c.edNet);
       L.push(el);
     }
     if (modo.hasFunnel) {
@@ -244,7 +278,7 @@ function crearPanel(root, modo, nombreModo) {
   function pedir(ev) {
     ev.preventDefault();
     const c = precios(modo, state);
-    if (c.piezas <= 0) return;  // nada que pedir
+    if ((state.static + state.video + state.edicion) <= 0) return;
     const url = "https://wa.me/" + MODOS.whatsapp + "?text=" + encodeURIComponent(mensaje());
     window.open(url, "_blank", "noopener");
   }
@@ -292,7 +326,6 @@ function initTabs() {
   }
   tabs.forEach(t => t.addEventListener('click', () => activar(t.dataset.tab)));
 
-  // Botón "ver despliegue creativo" del nudge
   const goto = $('[data-goto-despliegue]');
   if (goto) goto.addEventListener('click', () => {
     activar('despliegue');
