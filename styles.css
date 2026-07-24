@@ -166,6 +166,78 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; }
 }
 .card__head .muted { font-size: 14px; margin-top: 6px; }
 
+/* ---------- TIERS (escalera despliegue) ---------- */
+.tiers { display: grid; grid-template-columns: 1fr; gap: 14px; }
+@media (min-width: 640px) { .tiers { grid-template-columns: repeat(3, 1fr); } }
+.tier {
+  position: relative; text-align: left; cursor: pointer; font-family: var(--sans);
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 22px 18px; border-radius: 16px;
+  background: rgba(255,255,255,0.03); border: 1px solid var(--line);
+  transition: all .18s ease;
+}
+.tier:hover { border-color: rgba(255,255,255,0.24); background: rgba(255,255,255,0.05); }
+.tier--featured { border-color: rgba(120,130,240,0.45); }
+.tier.is-selected {
+  border-color: transparent;
+  background: linear-gradient(160deg, rgba(109,94,240,0.22), rgba(78,146,214,0.16));
+  box-shadow: inset 0 0 0 1.5px rgba(130,140,245,0.7), 0 16px 34px -18px rgba(109,94,240,0.8);
+}
+.tier__badge {
+  position: absolute; top: -10px; right: 14px;
+  font-size: 9.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  color: #fff; padding: 4px 10px; border-radius: 999px; background: var(--grad-cta);
+  box-shadow: 0 6px 16px -6px rgba(109,94,240,0.8);
+}
+.tier__name { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+.tier__price b { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; }
+.tier__price small { font-size: 13px; color: var(--muted); margin-left: 3px; }
+.tier__list { list-style: none; display: flex; flex-direction: column; gap: 7px; margin: 4px 0 auto; }
+.tier__list li { position: relative; padding-left: 22px; font-size: 13.5px; color: var(--ink); }
+.tier__list li::before {
+  content: ""; position: absolute; left: 0; top: 5px; width: 13px; height: 13px; border-radius: 50%;
+  background: rgba(46,158,107,0.18); box-shadow: inset 0 0 0 1px rgba(46,158,107,0.5);
+}
+.tier__list li::after {
+  content: ""; position: absolute; left: 4px; top: 8px; width: 4px; height: 6px;
+  border: solid var(--green); border-width: 0 2px 2px 0; transform: rotate(45deg);
+}
+.tier__pick {
+  margin-top: 12px; text-align: center; font-size: 13px; font-weight: 700;
+  padding: 10px; border-radius: 10px; color: var(--ink);
+  border: 1px solid var(--line); transition: all .18s ease;
+}
+.tier.is-selected .tier__pick { color: #fff; border-color: transparent; background: var(--grad-cta); }
+.tier.is-selected .tier__pick::before { content: "✓ "; }
+
+/* ---------- PRESETS (paquetes por servicio) ---------- */
+.presets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+@media (max-width: 420px) { .presets { grid-template-columns: 1fr 1fr; } }
+.preset {
+  position: relative; cursor: pointer; font-family: var(--sans); text-align: center;
+  display: flex; flex-direction: column; gap: 3px; padding: 14px 8px; border-radius: 12px;
+  background: rgba(255,255,255,0.03); border: 1px solid var(--line); transition: all .18s ease;
+}
+.preset:hover { border-color: rgba(255,255,255,0.24); }
+.preset.is-active { border-color: transparent; background: linear-gradient(150deg, rgba(109,94,240,0.24), rgba(78,146,214,0.18)); box-shadow: inset 0 0 0 1.5px rgba(130,140,245,0.65); }
+.preset--star::after { content: "★"; position: absolute; top: 6px; right: 8px; font-size: 10px; color: var(--blue); }
+.preset__n { font-size: 12px; font-weight: 600; color: var(--muted); }
+.preset__p { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
+.preset__u { font-size: 10.5px; color: var(--faint); }
+
+.cat__line {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line-soft); font-size: 14px;
+}
+.cat__line b { font-weight: 700; }
+.cat__amt { color: var(--muted); white-space: nowrap; }
+.cat__amt b { color: var(--ink); }
+.cat + .cat, .config > .cat { margin-top: 0; }
+
+.line--sub span:first-child { color: var(--faint); font-size: 12.5px; }
+.line--sub { padding-top: 2px; border-bottom: 1px solid var(--line-soft); }
+.total__mo { font-size: 15px; color: var(--muted); font-weight: 500; margin-left: 2px; }
+
 /* Campo destacado (edición profesional) */
 .card--feature {
   position: relative;

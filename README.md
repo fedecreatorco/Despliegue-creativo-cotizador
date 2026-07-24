@@ -1,77 +1,70 @@
 # Cotizador · Despliegue Creativo para Ads — Ecom Labs Studio
 
 Página web informativa (tipo cotizador) para el servicio de **despliegue creativo para Meta y TikTok Ads**.
-El cliente arma su paquete y ve el precio en tiempo real.
+El cliente elige un paquete, lo personaliza y ve el precio en tiempo real.
 
-## Dos modos de cotización (pestañas)
+## Dos pestañas
 
 Debajo del subtítulo del hero hay dos pestañas:
 
-1. **Despliegue creativo** — el producto completo. Incluye **análisis de audiencia +
-   producto/servicio** y **estrategia de funnel** (TOFU · MOFU · BOFU) gratis, con
-   descuentos por volumen agresivos. Es la mejor relación precio-beneficio.
-2. **Piezas individuales** — à la carte, para quien solo necesita unas piezas (videos,
-   static ads o los dos). Sin análisis ni estrategia; descuentos por volumen ligeros.
-   Un *nudge* en vivo muestra cuánto ahorraría el cliente pasando al despliegue.
+1. **Despliegue creativo** — escalera de 3 **planes mensuales** (ancla). Cada plan incluye
+   **análisis de audiencia + producto** y **estrategia de funnel** (TOFU · MOFU · BOFU),
+   más videos y static ads. Se puede personalizar con piezas extra.
+2. **Paquetes por servicio** — paquetes sueltos à la carte: Videos, Static ads y
+   Edición profesional. Cada uno con packs-atajo (Good/Better/Best) y stepper para
+   personalizar la cantidad. Sin análisis ni estrategia.
 
-Cada línea del resumen muestra el **precio por pieza** (efectivo, ya con descuento) y
-junto al total aparece el **promedio por pieza**, para que el comprador analice sin calculadora.
-
-### Despliegue creativo incluye
-
-- **Análisis de audiencia + producto/servicio** (incluido)
-- **Estrategia de funnel** TOFU · MOFU · BOFU (incluido)
-- **Generación y despliegue** — volumen con calidad y edición básica:
-  - **Static ads** — mínimo 10, en bloques de 5
-  - **Videos 15–30 s** — mínimo 20
-- Reparto automático por funnel y cálculo del total en tiempo real.
-- **CTA "Realizar pedido"** → arma el pedido con todas las especificaciones y abre WhatsApp.
-
-### Piezas individuales incluye
-
-- **Static ads** y **Videos 15–30 s** sueltos (à la carte).
-- **Edición profesional** (opcional, campo destacado) — posproducción de alto valor:
-  motion graphics, subtítulos premium, b-rolls y efectos de sonido/visuales. Requiere
-  material de la marca.
+Modelo **packs + personalizar**: los paquetes son atajos que fijan la cantidad; el
+descuento se calcula por cantidad, así que cualquier ajuste recalcula solo. Cada línea
+muestra el **precio por pieza** para que el comprador analice sin calculadora.
 
 ## Modelo de precios
 
-Todo el pricing vive en el objeto `MODOS` al inicio de [`script.js`](script.js),
-separado por modo (`despliegue` e `individual`). Para ajustar precios, mínimos o
-descuentos, edita solo esos valores; el resto se recalcula solo.
+Todo el pricing vive en el objeto `PLAN` al inicio de [`script.js`](script.js).
+Para ajustar precios o descuentos, edita solo esos valores; el resto se recalcula solo.
 
-> Regla: los descuentos del **despliegue siempre superan** a los del individual, en cada cantidad.
+### Despliegue creativo — escalera mensual (ancla)
 
-### Modo · Despliegue creativo (mejor precio-beneficio)
+| Plan | Precio | Videos | Static ads | ~$/video efectivo |
+|---|---|---|---|---|
+| Esencial | **$350/mes** | 10 | 5 | ~$32 |
+| **Pro** (destacado) | **$550/mes** | 20 | 10 | ~$24.50 |
+| Scale | **$750/mes** | 30 | 15 | ~$22 |
 
-**Static ads** — bloques de 5, **$30 por bloque** ($6 c/u) · mínimo 10.
+- Los tres incluyen **estrategia completa** (análisis + funnel TOFU 50% · MOFU 30% · BOFU 20%).
+- Personalizable: video extra **$28** c/u, static extra **$6** c/u.
+- Es el **mejor precio por pieza** del catálogo (mayoreo mensual).
 
-**Videos 15–30 s** — $50 c/u, con descuento por volumen:
+### Paquetes por servicio (retail, à la carte)
 
-| Cantidad | Descuento |
-|---|---|
-| 3–4 | 10% |
-| 5–9 | 20% |
-| 10–19 | 35% |
-| 20–29 | 40% |
-| +10 videos | +5% (tope 60%) |
+**Videos** ($50 c/u):
 
-- Mínimos del paquete base: 10 static + 20 videos → **$660 USD** (video ya con 40% off).
-- Incluye análisis + estrategia de funnel (TOFU 50% · MOFU 30% · BOFU 20%).
+| Pack | Videos | Descuento | Precio | $/video |
+|---|---|---|---|---|
+| Pack 5 | 5 | 15% | $210 | $42 |
+| Pack 10 | 10 | 35% | $325 | $32.50 |
+| Pack 15 | 15 | 42% | $435 | $29 |
 
-### Modo · Piezas individuales (à la carte)
+**Static ads** ($6 c/u, bloques de 5):
 
-- **Static ads** — bloques de 5, **$30 por bloque** ($6 c/u).
-- **Videos 15–30 s** — $50 c/u, con descuento por volumen (siempre bajo el despliegue):
-  3–4 → 8% · 5–9 → 12% · 10–19 → 20% · 20–29 → 25% · 30+ → 30%.
-- **Edición profesional** (opcional) — $40 c/u: desde 5 → 20% · desde 10 → 25%.
-- Sin análisis ni estrategia de funnel. Un *nudge* compara en vivo con el despliegue.
-- Ejemplo: 10 static + 20 videos = **$810** (vs. $660 en despliegue → ahorras $150).
+| Pack | Statics | Descuento | Precio | $/pieza |
+|---|---|---|---|---|
+| Pack 10 | 10 | — | $60 | $6 |
+| Pack 20 | 20 | 15% | $102 | $5.10 |
+| Pack 30 | 30 | 25% | $135 | $4.50 |
+
+**Edición profesional** ($40 c/u) — campo destacado con perks (motion graphics,
+subtítulos de alto valor, b-rolls, efectos de sonido y visuales; requiere material de la marca):
+
+| Pack | Ediciones | Descuento | Precio | $/pieza |
+|---|---|---|---|---|
+| Pack 5 | 5 | 20% | $160 | $32 |
+| Pack 10 | 10 | 30% | $280 | $28 |
 
 ### Común
 
-- WhatsApp de pedidos: `+1 (201) 552-8075` (`MODOS.whatsapp`).
-- El análisis y la estrategia se muestran como **incluidos** solo en el modo despliegue.
+- WhatsApp de pedidos: `+1 (201) 552-8075` (`PLAN.whatsapp`).
+- **CTA "Realizar pedido"** → arma el pedido con todas las especificaciones y abre WhatsApp.
 
 ## Estructura
 
@@ -79,7 +72,7 @@ descuentos, edita solo esos valores; el resto se recalcula solo.
 cotizador-despliegue-creativo/
 ├── index.html      # estructura de la página
 ├── styles.css      # diseño (dark premium, marca Ecom Labs)
-├── script.js       # lógica del cotizador + modelo de precios (CONFIG)
+├── script.js       # lógica + modelo de precios (objeto PLAN)
 ├── assets/
 │   └── logo.png    # logo Ecom Labs Studio (crema sobre negro)
 └── README.md
@@ -103,7 +96,7 @@ python3 -m http.server 8000
 
 ## Pendientes antes de publicar
 
-- [ ] Confirmar el modelo de precios (`CONFIG` en `script.js`).
+- [ ] Confirmar el modelo de precios (`PLAN` en `script.js`).
 - [ ] (Opcional) Sustituir `assets/logo.png` por el archivo oficial de marca a color real.
 
 ---

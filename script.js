@@ -1,49 +1,50 @@
 /* ===================================================================
-   Ecom Labs Studio — Cotizador de Despliegue Creativo
+   Ecom Labs Studio — Cotizador de Despliegue Creativo (paquetes)
    -------------------------------------------------------------------
-   Dos modos de cotización:
-     · despliegue  → producto completo (análisis + estrategia + volumen)
-     · individual  → piezas sueltas à la carte + edición profesional
+   Dos pestañas:
+     · despliegue  → escalera de 3 paquetes mensuales (ancla $550)
+     · servicios   → paquetes sueltos por servicio (videos / static / edición)
+
+   Modelo tipo "packs + personalizar": los paquetes son atajos; el
+   descuento se calcula por cantidad, así que cualquier ajuste recalcula.
 
    MODELO DE PRECIOS (editable). Cambia solo estos valores; el resto se
-   recalcula solo. Todos los importes en USD.
-
-   Regla: los descuentos del despliegue SIEMPRE superan a los del
-   individual, para que el despliegue sea la mejor relación precio-beneficio.
+   recalcula solo. Importes en USD.
    =================================================================== */
-const MODOS = {
+const PLAN = {
   despliegue: {
-    precio:  { static: 6, video: 50 },   // static: bloque de 5 = $30
-    minimo:  { static: 10, video: 20 },
-    paso:    { static: 5,  video: 1 },
-    hasEdicion: false,
-    hasFunnel:  true,
+    // Escalera mensual. 'pro' es el ancla destacada.
+    tiers: [
+      { id: "esencial", nombre: "Esencial", precio: 350, videos: 10, statics: 5 },
+      { id: "pro",      nombre: "Pro",      precio: 550, videos: 20, statics: 10, destacado: true },
+      { id: "scale",    nombre: "Scale",    precio: 750, videos: 30, statics: 15 },
+    ],
+    extra: { video: 28, static: 6 },   // precio por pieza extra (personalizar)
     funnel: { tofu: 0.50, mofu: 0.30, bofu: 0.20 },
-    // VIDEO: 3→10% · 5→20% · 10→35% · 20→40% · +5% por cada 10 (tope 60%)
-    descVideo: (v) =>
-      v < 3  ? 0    :
-      v < 5  ? 0.10 :
-      v < 10 ? 0.20 :
-      v < 20 ? 0.35 :
-      Math.min(0.40 + Math.floor((v - 20) / 10) * 0.05, 0.60),
   },
-  individual: {
-    precio:  { static: 6, video: 50, edicion: 40 },
-    minimo:  { static: 0, video: 0, edicion: 0 },
-    paso:    { static: 5, video: 1, edicion: 1 },
-    hasEdicion: true,
-    hasFunnel:  false,
-    // VIDEO (descuento ligero, siempre por debajo del despliegue):
-    // 3→8% · 5→12% · 10→20% · 20→25% · 30→30%
-    descVideo: (v) =>
-      v < 3  ? 0    :
-      v < 5  ? 0.08 :
-      v < 10 ? 0.12 :
-      v < 20 ? 0.20 :
-      v < 30 ? 0.25 :
-      0.30,
-    // EDICIÓN: 5→20% · 10→25%
-    descEdicion: (e) => e < 5 ? 0 : e < 10 ? 0.20 : 0.25,
+  servicios: {
+    video: {
+      nombre: "Videos", etiqueta: "15–30 s", unidad: "videos",
+      precio: 50, paso: 1, presets: [5, 10, 15], destacado: 10,
+      // 5→15% · 10→35% · 15→42%
+      desc: (v) => v < 5 ? 0 : v < 10 ? 0.15 : v < 15 ? 0.35 : 0.42,
+      nota: "El precio por video baja con el volumen.",
+    },
+    static: {
+      nombre: "Static ads", etiqueta: "", unidad: "static ads",
+      precio: 6, paso: 5, presets: [10, 20, 30], destacado: 20,
+      // 20→15% · 30→25%
+      desc: (s) => s < 20 ? 0 : s < 30 ? 0.15 : 0.25,
+      nota: "Bloques de 5 piezas.",
+    },
+    edicion: {
+      nombre: "Edición profesional", etiqueta: "Pro", unidad: "ediciones",
+      precio: 40, paso: 1, presets: [5, 10], destacado: 10,
+      // 5→20% · 10→30%
+      desc: (e) => e < 5 ? 0 : e < 10 ? 0.20 : 0.30,
+      nota: "Motion graphics, subtítulos premium, b-rolls y efectos. Requiere material de la marca.",
+      perks: ["Motion graphics", "Subtítulos de alto valor percibido", "B-rolls", "Efectos de sonido y visuales"],
+    },
   },
   whatsapp: "12015528075",   // +1 (201) 552-8075
 };
@@ -52,269 +53,278 @@ const MODOS = {
 const $  = (s, ctx = document) => ctx.querySelector(s);
 const $$ = (s, ctx = document) => Array.from(ctx.querySelectorAll(s));
 const pctTxt = (d) => "–" + Math.round(d * 100) + "%";
-
-/* Formato de dinero con centavos solo cuando hacen falta ($32.50, $60) */
 function money(n) {
   const r = Math.round(n * 100) / 100;
   return "$" + r.toLocaleString("en-US", {
-    minimumFractionDigits: (r % 1 ? 2 : 0),
-    maximumFractionDigits: 2,
+    minimumFractionDigits: (r % 1 ? 2 : 0), maximumFractionDigits: 2,
   });
 }
-const porPieza = (net, qty) => qty > 0 ? money(net / qty) + " c/u" : "";
-
-/* Cálculo de precios para un modo dado y unas cantidades. Reutilizable
-   (también lo usa el "nudge" del panel individual). */
-function precios(modo, q) {
-  const p = modo.precio;
-  const staticNet = (q.static || 0) * p.static;
-
-  const videoGross = (q.video || 0) * p.video;
-  const videoDisc  = modo.descVideo ? modo.descVideo(q.video || 0) : 0;
-  const videoNet   = videoGross * (1 - videoDisc);
-
-  let edGross = 0, edDisc = 0, edNet = 0;
-  if (modo.hasEdicion && p.edicion) {
-    edGross = (q.edicion || 0) * p.edicion;
-    edDisc  = modo.descEdicion(q.edicion || 0);
-    edNet   = edGross * (1 - edDisc);
-  }
-
-  const total  = staticNet + videoNet + edNet;
-  const ahorro = (videoGross - videoNet) + (edGross - edNet);
-  const piezas = (q.static || 0) + (q.video || 0);   // piezas de contenido
-  return { staticNet, videoGross, videoDisc, videoNet,
-           edGross, edDisc, edNet, total, ahorro, piezas };
-}
-
+const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 function repartoFunnel(f, total) {
   const tofu = Math.round(total * f.tofu);
   const mofu = Math.round(total * f.mofu);
-  const bofu = Math.max(0, total - tofu - mofu);
-  return { tofu, mofu, bofu };
+  return { tofu, mofu, bofu: Math.max(0, total - tofu - mofu) };
+}
+const waURL = (msg) => "https://wa.me/" + PLAN.whatsapp + "?text=" + encodeURIComponent(msg);
+function abrirWhatsApp(msg) { window.open(waURL(msg), "_blank", "noopener"); }
+
+/* Precio de un servicio para una cantidad dada */
+function precioServicio(cfg, qty) {
+  const bruto = qty * cfg.precio;
+  const d = cfg.desc(qty);
+  const neto = bruto * (1 - d);
+  return { bruto, desc: d, neto, unit: qty > 0 ? neto / qty : 0 };
 }
 
 /* ===================================================================
-   Controlador de panel (sirve para ambos modos)
+   PANEL A · Despliegue creativo (escalera)
    =================================================================== */
-function crearPanel(root, modo, nombreModo) {
-  if (!root) return null;
+function initDespliegue() {
+  const root = $('[data-panel="despliegue"]');
+  if (!root) return;
+  const cfg = PLAN.despliegue;
+  const state = { tierId: (cfg.tiers.find(t => t.destacado) || cfg.tiers[0]).id, extraVideo: 0, extraStatic: 0 };
 
-  const state = {
-    platform: "Meta",
-    static:  modo.minimo.static,
-    video:   modo.minimo.video,
-    edicion: modo.minimo.edicion || 0,
-  };
+  // --- Render de tarjetas de tier ---
+  const cont = $('[data-tiers]', root);
+  cont.innerHTML = cfg.tiers.map(t => `
+    <button class="tier ${t.destacado ? "tier--featured" : ""}" data-tier="${t.id}">
+      ${t.destacado ? '<span class="tier__badge">Más popular</span>' : ""}
+      <span class="tier__name">${esc(t.nombre)}</span>
+      <span class="tier__price"><b>${money(t.precio)}</b><small>/mes</small></span>
+      <ul class="tier__list">
+        <li>Estrategia + funnel incluida</li>
+        <li><b>${t.videos}</b> videos 15–30 s</li>
+        <li><b>${t.statics}</b> static ads</li>
+      </ul>
+      <span class="tier__pick">Elegir</span>
+    </button>`).join("");
 
-  /* ---- Rellenar constantes en los textos ---- */
-  $$('[data-fill]', root).forEach(el => {
-    const k = el.dataset.fill;
-    if (k === "static-bloque") el.textContent = money(modo.precio.static * modo.paso.static);
-    if (k === "static-unit")   el.textContent = money(modo.precio.static);
-    if (k === "static-min")    el.textContent = modo.minimo.static;
-    if (k === "video")         el.textContent = money(modo.precio.video);
-    if (k === "video-min")     el.textContent = modo.minimo.video;
-    if (k === "edicion")       el.textContent = money(modo.precio.edicion);
-  });
+  const tier = () => cfg.tiers.find(t => t.id === state.tierId);
 
-  const q  = (s) => $(s, root);
-  const qq = (s) => $$(s, root);
+  function render() {
+    // Selección visual
+    $$('.tier', root).forEach(el => el.classList.toggle("is-selected", el.dataset.tier === state.tierId));
 
-  function setLineaDesc(kind, disc, gross) {
-    const off = q(`[data-off="${kind}"]`);
-    const strike = q(`[data-gross="${kind}"]`);
-    if (!off) return;
-    if (disc > 0) {
-      off.textContent = pctTxt(disc); off.hidden = false;
-      if (strike) { strike.textContent = money(gross); strike.hidden = false; }
-    } else {
-      off.hidden = true;
-      if (strike) strike.hidden = true;
-    }
+    const t = tier();
+    const videos = t.videos + state.extraVideo;
+    const statics = t.statics + state.extraStatic;
+    const extraTotal = state.extraVideo * cfg.extra.video + state.extraStatic * cfg.extra.static;
+    const total = t.precio + extraTotal;
+    const piezas = videos + statics;
+    const perVideo = videos > 0 ? (total - statics * cfg.extra.static) / videos : 0;
+
+    // Resumen
+    $('[data-d-tier]', root).textContent = t.nombre;
+    $('[data-d-price]', root).textContent = money(t.precio);
+    $('[data-d-videos]', root).textContent = videos;
+    $('[data-d-statics]', root).textContent = statics;
+
+    // Extras
+    const rowEV = $('[data-d-line="extraVideo"]', root);
+    rowEV.hidden = state.extraVideo <= 0;
+    if (state.extraVideo > 0) $('[data-d-amount="extraVideo"]', root).textContent = money(state.extraVideo * cfg.extra.video);
+    const rowES = $('[data-d-line="extraStatic"]', root);
+    rowES.hidden = state.extraStatic <= 0;
+    if (state.extraStatic > 0) $('[data-d-amount="extraStatic"]', root).textContent = money(state.extraStatic * cfg.extra.static);
+
+    $('[data-d-total]', root).textContent = money(total);
+    $('[data-d-pervideo]', root).textContent = money(perVideo);
+
+    // Funnel
+    const r = repartoFunnel(cfg.funnel, piezas);
+    const max = Math.max(r.tofu, r.mofu, r.bofu, 1);
+    ["tofu", "mofu", "bofu"].forEach(k => {
+      $(`[data-funnel="${k}"]`, root).textContent = r[k];
+      $(`[data-funnel-bar="${k}"]`, root).style.width = (r[k] / max * 100) + "%";
+    });
+    $$('[data-d-pieces]', root).forEach(el => el.textContent = piezas);
+
+    // Botones "–"
+    $('[data-stepper="extraVideo"] .step[data-dir="-1"]', root).disabled = state.extraVideo <= 0;
+    $('[data-stepper="extraStatic"] .step[data-dir="-1"]', root).disabled = state.extraStatic <= 0;
   }
-  function setUnit(kind, net, qty) {
-    const el = q(`[data-unit="${kind}"]`);
-    if (el) el.textContent = porPieza(net, qty);
+
+  function mensaje() {
+    const t = tier();
+    const videos = t.videos + state.extraVideo;
+    const statics = t.statics + state.extraStatic;
+    const total = t.precio + state.extraVideo * cfg.extra.video + state.extraStatic * cfg.extra.static;
+    const r = repartoFunnel(cfg.funnel, videos + statics);
+    const L = [];
+    L.push("Hola Ecom Labs 👋 Quiero contratar el DESPLIEGUE CREATIVO:");
+    L.push("");
+    L.push("🚀 Plan: " + t.nombre + " — " + money(t.precio) + "/mes");
+    L.push("✅ Incluye análisis de audiencia/producto + estrategia de funnel");
+    L.push("🎬 Videos 15–30 s: " + videos + (state.extraVideo ? " (" + t.videos + " + " + state.extraVideo + " extra)" : ""));
+    L.push("🖼️ Static ads: " + statics + (state.extraStatic ? " (" + t.statics + " + " + state.extraStatic + " extra)" : ""));
+    L.push("📊 Funnel: TOFU " + r.tofu + " · MOFU " + r.mofu + " · BOFU " + r.bofu);
+    L.push("");
+    L.push("💰 Total: " + money(total) + " USD/mes");
+    return L.join("\n");
+  }
+
+  // --- Eventos ---
+  cont.addEventListener("click", (e) => {
+    const card = e.target.closest(".tier");
+    if (!card) return;
+    state.tierId = card.dataset.tier;
+    render();
+  });
+  $$('.stepper', root).forEach(stp => {
+    const kind = stp.dataset.stepper;               // extraVideo | extraStatic
+    const paso = kind === "extraStatic" ? PLAN.servicios.static.paso : 1;
+    $$('.step', stp).forEach(btn => btn.addEventListener("click", () => {
+      state[kind] = Math.max(0, Math.min(999, state[kind] + parseInt(btn.dataset.dir, 10) * paso));
+      $('.step__val', stp).value = state[kind];
+      render();
+    }));
+    const input = $('.step__val', stp);
+    input.addEventListener("input", () => {
+      state[kind] = Math.max(0, Math.min(999, parseInt(input.value.replace(/\D/g, ""), 10) || 0));
+      input.value = state[kind]; render();
+    });
+  });
+  $('[data-cta]', root).addEventListener("click", (e) => { e.preventDefault(); abrirWhatsApp(mensaje()); });
+
+  render();
+}
+
+/* ===================================================================
+   PANEL B · Paquetes por servicio
+   =================================================================== */
+function initServicios() {
+  const root = $('[data-panel="servicios"]');
+  if (!root) return;
+  const cats = PLAN.servicios;
+  const state = { video: 0, static: 0, edicion: 0 };
+
+  // --- Render de bloques de categoría ---
+  const cont = $('[data-cats]', root);
+  cont.innerHTML = Object.entries(cats).map(([key, c]) => {
+    const perks = c.perks ? `<ul class="perks">${c.perks.map(p => `<li>${esc(p)}</li>`).join("")}</ul>` : "";
+    const presets = c.presets.map(p => {
+      const pr = precioServicio(c, p);
+      const star = p === c.destacado ? ' preset--star' : "";
+      return `<button class="preset${star}" data-cat="${key}" data-qty="${p}">
+        <span class="preset__n">Pack ${p}</span>
+        <span class="preset__p">${money(pr.neto)}</span>
+        <span class="preset__u">${money(pr.unit)} c/u${pr.desc ? " · " + pctTxt(pr.desc) : ""}</span>
+      </button>`;
+    }).join("");
+    const feat = key === "edicion" ? " card--feature" : "";
+    const badge = key === "edicion" ? '<div class="feature-badge">Posproducción profesional</div>' : "";
+    return `<div class="card cat${feat}" data-catblock="${key}">
+      ${badge}
+      <div class="card__head">
+        <h2>${esc(c.nombre)} ${c.etiqueta ? `<span class="tag tag--soft">${esc(c.etiqueta)}</span>` : ""}</h2>
+        <p class="muted">${esc(c.nota)}</p>
+      </div>
+      ${perks}
+      <div class="presets">${presets}</div>
+      <div class="counter">
+        <div class="counter__info"><span class="counter__name">Personaliza la cantidad</span></div>
+        <div class="stepper" data-stepper="${key}">
+          <button class="step" data-dir="-1" aria-label="Quitar">–</button>
+          <input class="step__val" type="text" inputmode="numeric" value="0" data-qty="${key}" aria-label="Cantidad de ${esc(c.unidad)}" />
+          <button class="step" data-dir="1" aria-label="Agregar">+</button>
+        </div>
+      </div>
+      <div class="cat__line" data-catline="${key}" hidden></div>
+    </div>`;
+  }).join("");
+
+  function calcTotal() {
+    return Object.entries(cats).reduce((sum, [k, c]) => sum + precioServicio(c, state[k]).neto, 0);
   }
 
   function render() {
-    const c = precios(modo, state);
+    let piezas = 0, total = 0;
+    Object.entries(cats).forEach(([k, c]) => {
+      const pr = precioServicio(c, state[k]);
+      total += pr.neto;
+      if (k !== "edicion") piezas += state[k];
 
-    // Cantidades
-    ["static", "video", "edicion"].forEach(k => {
-      const el = q(`[data-sum-qty="${k}"]`);
-      if (el) el.textContent = state[k];
+      // Preset activo
+      $$(`.preset[data-cat="${k}"]`, root).forEach(b => b.classList.toggle("is-active", +b.dataset.qty === state[k]));
+
+      // Línea dentro del bloque
+      const line = $(`[data-catline="${k}"]`, root);
+      if (state[k] > 0) {
+        line.hidden = false;
+        line.innerHTML = `<span><b>${state[k]}</b> ${esc(c.unidad)} ${pr.desc ? `<span class="off">${pctTxt(pr.desc)}</span>` : ""}</span>
+          <span class="cat__amt">${money(pr.unit)} c/u · <b>${money(pr.neto)}</b></span>`;
+      } else line.hidden = true;
+
+      // Resumen (carrito)
+      const row = $(`[data-s-line="${k}"]`, root);
+      if (state[k] > 0) {
+        row.hidden = false;
+        $(`[data-s-qty="${k}"]`, root).textContent = state[k];
+        $(`[data-s-amount="${k}"]`, root).textContent = money(pr.neto);
+        $(`[data-s-unit="${k}"]`, root).textContent = money(pr.unit) + " c/u" + (pr.desc ? " · " + pctTxt(pr.desc) : "");
+      } else row.hidden = true;
+
+      // Botón "–"
+      $(`[data-stepper="${k}"] .step[data-dir="-1"]`, root).disabled = state[k] <= 0;
     });
 
-    // Static
-    const sAmt = q('[data-sum-amount="static"]');
-    if (sAmt) sAmt.textContent = money(c.staticNet);
-    setUnit("static", c.staticNet, state.static);
-
-    // Video
-    const vAmt = q('[data-sum-amount="video"]');
-    if (vAmt) vAmt.textContent = money(c.videoNet);
-    setLineaDesc("video", c.videoDisc, c.videoGross);
-    setUnit("video", c.videoNet, state.video);
-
-    // Edición
-    if (modo.hasEdicion) {
-      const rowE = q('[data-line="edicion"]');
-      if (state.edicion > 0) {
-        rowE.hidden = false;
-        q('[data-sum-amount="edicion"]').textContent = money(c.edNet);
-        setLineaDesc("edicion", c.edDisc, c.edGross);
-        setUnit("edicion", c.edNet, state.edicion);
-      } else {
-        rowE.hidden = true;
-      }
-    }
-
-    // Líneas static/video que se ocultan en 0 (modo individual)
-    ["static", "video"].forEach(k => {
-      const row = q(`[data-line="${k}"]`);
-      if (row && modo.minimo[k] === 0) row.hidden = state[k] <= 0;
-    });
-
-    // Total, precio por pieza y ahorro
-    q('[data-total]').textContent = money(c.total);
-    const contenidoNet = c.staticNet + c.videoNet;
-    const ppWrap = q('[data-perpiece-wrap]');
-    if (ppWrap) {
-      if (c.piezas > 0) {
-        ppWrap.hidden = false;
-        q('[data-perpiece]').textContent = money(contenidoNet / c.piezas);
-        qq('[data-total-pieces]').forEach(el => el.textContent = c.piezas);
-      } else ppWrap.hidden = true;
-    } else {
-      qq('[data-total-pieces]').forEach(el => el.textContent = c.piezas);
-    }
-    const ahorroWrap = q('[data-ahorro-wrap]');
-    if (ahorroWrap) {
-      if (c.ahorro > 0) { ahorroWrap.hidden = false; q('[data-ahorro]').textContent = money(c.ahorro); }
-      else ahorroWrap.hidden = true;
-    }
-
-    // Funnel
-    if (modo.hasFunnel) {
-      const r = repartoFunnel(modo.funnel, c.piezas);
-      const max = Math.max(r.tofu, r.mofu, r.bofu, 1);
-      ["tofu", "mofu", "bofu"].forEach(k => {
-        q(`[data-funnel="${k}"]`).textContent = r[k];
-        q(`[data-funnel-bar="${k}"]`).style.width = (r[k] / max * 100) + "%";
-      });
-    }
-
-    // Nudge (individual): comparar SOLO video + static contra el despliegue
-    const nudge = q('[data-nudge]');
-    if (nudge) {
-      const base = { static: state.static, video: state.video };
-      const ind = precios(modo, base);
-      const des = precios(MODOS.despliegue, base);
-      const ahorra = ind.total - des.total;
-      if (c.piezas > 0 && ahorra > 0) {
-        nudge.hidden = false;
-        q('[data-nudge-total]').textContent  = money(des.total);
-        q('[data-nudge-ahorro]').textContent = money(ahorra);
-      } else {
-        nudge.hidden = true;
-      }
-    }
-
-    // Estado vacío (individual)
-    const emptyHint = q('[data-empty-hint]');
-    const cta = q('[data-cta]');
-    if (modo.minimo.static === 0 && modo.minimo.video === 0) {
-      const vacio = (state.static + state.video + state.edicion) <= 0;
-      if (emptyHint) emptyHint.style.display = vacio ? "" : "none";
-      if (cta) cta.classList.toggle("btn--disabled", vacio);
-    }
-
-    // Botones "–" deshabilitados en el mínimo
-    ["static", "video", "edicion"].forEach(k => {
-      const btn = q(`[data-stepper="${k}"] .step[data-dir="-1"]`);
-      if (btn) btn.disabled = state[k] <= modo.minimo[k];
-    });
+    $('[data-s-total]', root).textContent = money(total);
+    const vacio = (state.video + state.static + state.edicion) <= 0;
+    $('[data-s-empty]', root).style.display = vacio ? "" : "none";
+    $('[data-cta]', root).classList.toggle("btn--disabled", vacio);
   }
 
-  /* ---- Cantidades ---- */
   function setQty(kind, val) {
-    const min = modo.minimo[kind];
-    let n = parseInt(val, 10);
-    if (isNaN(n)) n = min;
-    n = Math.max(min, Math.min(9999, n));
+    const c = cats[kind];
+    let n = parseInt(val, 10); if (isNaN(n)) n = 0;
+    n = Math.max(0, Math.min(999, n));
+    // Ajuste a múltiplos del paso (p.ej. static de 5 en 5)
+    if (c.paso > 1) n = Math.round(n / c.paso) * c.paso;
     state[kind] = n;
-    q(`[data-qty="${kind}"]`).value = n;
+    $(`[data-qty="${kind}"]`, root).value = n;
     render();
   }
 
-  /* ---- WhatsApp ---- */
   function mensaje() {
-    const c = precios(modo, state);
     const L = [];
-    L.push(nombreModo === "despliegue"
-      ? "Hola Ecom Labs 👋 Quiero realizar este pedido de DESPLIEGUE CREATIVO:"
-      : "Hola Ecom Labs 👋 Quiero realizar este pedido de PIEZAS INDIVIDUALES:");
+    L.push("Hola Ecom Labs 👋 Quiero realizar este pedido de PAQUETES:");
     L.push("");
-    L.push("📱 Plataforma: " + state.platform);
-    if (state.static > 0) L.push("🎨 Static ads: " + state.static + " (" + money(c.staticNet / state.static) + " c/u) → " + money(c.staticNet));
-    if (state.video > 0) {
-      let vl = "🎬 Videos 15–30 s: " + state.video;
-      if (c.videoDisc > 0) vl += " " + pctTxt(c.videoDisc);
-      vl += " (" + money(c.videoNet / state.video) + " c/u) → " + money(c.videoNet);
-      L.push(vl);
-    }
-    if (modo.hasEdicion && state.edicion > 0) {
-      let el = "✨ Ediciones profesionales: " + state.edicion;
-      if (c.edDisc > 0) el += " " + pctTxt(c.edDisc);
-      el += " (" + money(c.edNet / state.edicion) + " c/u) → " + money(c.edNet);
-      L.push(el);
-    }
-    if (modo.hasFunnel) {
-      const r = repartoFunnel(modo.funnel, c.piezas);
-      L.push("");
-      L.push("📊 Funnel: TOFU " + r.tofu + " · MOFU " + r.mofu + " · BOFU " + r.bofu);
-      L.push("✅ Incluye análisis de audiencia/producto + estrategia de funnel");
-    }
+    Object.entries(cats).forEach(([k, c]) => {
+      if (state[k] <= 0) return;
+      const pr = precioServicio(c, state[k]);
+      L.push(`• ${c.nombre}: ${state[k]} ${c.unidad}` + (pr.desc ? " " + pctTxt(pr.desc) : "") +
+             ` (${money(pr.unit)} c/u) → ${money(pr.neto)}`);
+    });
     L.push("");
-    L.push("💰 Total: " + money(c.total) + " USD");
-    if (c.ahorro > 0) L.push("(Ahorro por volumen: " + money(c.ahorro) + ")");
+    L.push("💰 Total: " + money(calcTotal()) + " USD");
     return L.join("\n");
   }
-  function pedir(ev) {
-    ev.preventDefault();
-    const c = precios(modo, state);
-    if ((state.static + state.video + state.edicion) <= 0) return;
-    const url = "https://wa.me/" + MODOS.whatsapp + "?text=" + encodeURIComponent(mensaje());
-    window.open(url, "_blank", "noopener");
-  }
 
-  /* ---- Eventos ---- */
-  qq('.stepper').forEach(stp => {
-    const kind = stp.dataset.stepper;
-    const paso = modo.paso[kind] || 1;
-    $$('.step', stp).forEach(btn => {
-      btn.addEventListener('click', () => setQty(kind, state[kind] + parseInt(btn.dataset.dir, 10) * paso));
-    });
-    const input = $('.step__val', stp);
-    input.addEventListener('input', () => setQty(kind, input.value.replace(/\D/g, '')));
-    input.addEventListener('blur',  () => setQty(kind, input.value));
+  // --- Eventos ---
+  cont.addEventListener("click", (e) => {
+    const preset = e.target.closest(".preset");
+    if (preset) { setQty(preset.dataset.cat, preset.dataset.qty); return; }
+    const step = e.target.closest(".step");
+    if (step) {
+      const stp = step.closest(".stepper");
+      const kind = stp.dataset.stepper;
+      setQty(kind, state[kind] + parseInt(step.dataset.dir, 10) * cats[kind].paso);
+    }
   });
-
-  qq('.chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      qq('.chip').forEach(c => c.classList.remove('is-active'));
-      chip.classList.add('is-active');
-      state.platform = chip.dataset.platform;
-    });
+  cont.addEventListener("input", (e) => {
+    const input = e.target.closest(".step__val");
+    if (!input) return;
+    const kind = input.dataset.qty;
+    state[kind] = Math.max(0, Math.min(999, parseInt(input.value.replace(/\D/g, ""), 10) || 0));
+    input.value = state[kind]; render();
   });
-
-  const cta = q('[data-cta]');
-  if (cta) cta.addEventListener('click', pedir);
+  $('[data-cta]', root).addEventListener("click", (e) => {
+    e.preventDefault();
+    if ((state.video + state.static + state.edicion) > 0) abrirWhatsApp(mensaje());
+  });
 
   render();
-  return { render };
 }
 
 /* ===================================================================
@@ -322,25 +332,19 @@ function crearPanel(root, modo, nombreModo) {
    =================================================================== */
 function initTabs() {
   const tabs = $$('.tab');
-  const paneles = { despliegue: $('[data-panel="despliegue"]'), individual: $('[data-panel="individual"]') };
-  function activar(nombre) {
+  const paneles = { despliegue: $('[data-panel="despliegue"]'), servicios: $('[data-panel="servicios"]') };
+  const activar = (nombre) => {
     tabs.forEach(t => {
       const on = t.dataset.tab === nombre;
-      t.classList.toggle('is-active', on);
-      t.setAttribute('aria-selected', on ? "true" : "false");
+      t.classList.toggle("is-active", on);
+      t.setAttribute("aria-selected", on ? "true" : "false");
     });
     Object.entries(paneles).forEach(([k, el]) => { if (el) el.hidden = (k !== nombre); });
-  }
-  tabs.forEach(t => t.addEventListener('click', () => activar(t.dataset.tab)));
-
-  const goto = $('[data-goto-despliegue]');
-  if (goto) goto.addEventListener('click', () => {
-    activar('despliegue');
-    document.getElementById('cotizador').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
+  };
+  tabs.forEach(t => t.addEventListener("click", () => activar(t.dataset.tab)));
 }
 
 /* ---------- Init ---------- */
-crearPanel($('[data-panel="despliegue"]'), MODOS.despliegue, "despliegue");
-crearPanel($('[data-panel="individual"]'), MODOS.individual, "individual");
+initDespliegue();
+initServicios();
 initTabs();
