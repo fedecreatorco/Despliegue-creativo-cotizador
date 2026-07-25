@@ -14,12 +14,13 @@
 const PLAN = {
   despliegue: {
     // Escalera mensual. 'pro' es el ancla destacada.
+    // vUnit/sUnit = valor por pieza dentro del plan (precio = videos*vUnit + statics*sUnit).
+    // Bajan al subir de plan (descuento por volumen) y son la tarifa de las piezas extra.
     tiers: [
-      { id: "esencial", nombre: "Esencial", precio: 350, videos: 10, statics: 5 },
-      { id: "pro",      nombre: "Pro",      precio: 550, videos: 20, statics: 10, destacado: true },
-      { id: "scale",    nombre: "Scale",    precio: 750, videos: 30, statics: 15 },
+      { id: "esencial", nombre: "Esencial", precio: 350, videos: 10, statics: 5,  vUnit: 32, sUnit: 6 },
+      { id: "pro",      nombre: "Pro",      precio: 550, videos: 20, statics: 10, vUnit: 25, sUnit: 5, destacado: true },
+      { id: "scale",    nombre: "Scale",    precio: 750, videos: 30, statics: 15, vUnit: 23, sUnit: 4 },
     ],
-    extra: { video: 28, static: 6 },   // precio por pieza extra (personalizar)
     funnel: { tofu: 0.50, mofu: 0.30, bofu: 0.20 },
   },
   servicios: {
@@ -94,8 +95,8 @@ function initDespliegue() {
       <span class="tier__price"><b>${money(t.precio)}</b><small>/mes</small></span>
       <ul class="tier__list">
         <li>Estrategia + funnel incluida</li>
-        <li><b>${t.videos}</b> videos 15–30 s</li>
-        <li><b>${t.statics}</b> static ads</li>
+        <li><b>${t.videos}</b> videos 15–30 s <span class="tier__unit">(${money(t.vUnit)} c/u)</span></li>
+        <li><b>${t.statics}</b> static ads <span class="tier__unit">(${money(t.sUnit)} c/u)</span></li>
       </ul>
       <span class="tier__pick">Elegir</span>
     </button>`).join("");
@@ -109,27 +110,37 @@ function initDespliegue() {
     const t = tier();
     const videos = t.videos + state.extraVideo;
     const statics = t.statics + state.extraStatic;
-    const extraTotal = state.extraVideo * cfg.extra.video + state.extraStatic * cfg.extra.static;
+    const extraTotal = state.extraVideo * t.vUnit + state.extraStatic * t.sUnit;
     const total = t.precio + extraTotal;
     const piezas = videos + statics;
-    const perVideo = videos > 0 ? (total - statics * cfg.extra.static) / videos : 0;
 
     // Resumen
     $('[data-d-tier]', root).textContent = t.nombre;
     $('[data-d-price]', root).textContent = money(t.precio);
-    $('[data-d-videos]', root).textContent = videos;
-    $('[data-d-statics]', root).textContent = statics;
+    $('[data-d-videos]', root).textContent = t.videos;
+    $('[data-d-statics]', root).textContent = t.statics;
+    $$('[data-d-vunit]', root).forEach(el => el.textContent = money(t.vUnit));
+    $$('[data-d-sunit]', root).forEach(el => el.textContent = money(t.sUnit));
+
+    // Notas dinámicas de "Personaliza tu plan" (tarifa según el plan elegido)
+    $('[data-extra-note="video"]', root).textContent = money(t.vUnit) + " c/u — tarifa de tu plan " + t.nombre;
+    $('[data-extra-note="static"]', root).textContent = money(t.sUnit) + " c/u · bloques de 5";
 
     // Extras
     const rowEV = $('[data-d-line="extraVideo"]', root);
     rowEV.hidden = state.extraVideo <= 0;
-    if (state.extraVideo > 0) $('[data-d-amount="extraVideo"]', root).textContent = money(state.extraVideo * cfg.extra.video);
+    if (state.extraVideo > 0) {
+      $('[data-d-xqty="video"]', root).textContent = state.extraVideo;
+      $('[data-d-amount="extraVideo"]', root).textContent = money(state.extraVideo * t.vUnit);
+    }
     const rowES = $('[data-d-line="extraStatic"]', root);
     rowES.hidden = state.extraStatic <= 0;
-    if (state.extraStatic > 0) $('[data-d-amount="extraStatic"]', root).textContent = money(state.extraStatic * cfg.extra.static);
+    if (state.extraStatic > 0) {
+      $('[data-d-xqty="static"]', root).textContent = state.extraStatic;
+      $('[data-d-amount="extraStatic"]', root).textContent = money(state.extraStatic * t.sUnit);
+    }
 
     $('[data-d-total]', root).textContent = money(total);
-    $('[data-d-pervideo]', root).textContent = money(perVideo);
 
     // Funnel
     const r = repartoFunnel(cfg.funnel, piezas);
@@ -149,7 +160,7 @@ function initDespliegue() {
     const t = tier();
     const videos = t.videos + state.extraVideo;
     const statics = t.statics + state.extraStatic;
-    const total = t.precio + state.extraVideo * cfg.extra.video + state.extraStatic * cfg.extra.static;
+    const total = t.precio + state.extraVideo * t.vUnit + state.extraStatic * t.sUnit;
     const r = repartoFunnel(cfg.funnel, videos + statics);
     const L = [];
     L.push("Hola Ecom Labs 👋 Quiero contratar el DESPLIEGUE CREATIVO:");

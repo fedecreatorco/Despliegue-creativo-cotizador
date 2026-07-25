@@ -25,14 +25,17 @@ Para ajustar precios o descuentos, edita solo esos valores; el resto se recalcul
 
 ### Despliegue creativo — escalera mensual (ancla)
 
-| Plan | Precio | Videos | Static ads | ~$/video efectivo |
-|---|---|---|---|---|
-| Esencial | **$350/mes** | 10 | 5 | ~$32 |
-| **Pro** (destacado) | **$550/mes** | 20 | 10 | ~$24.50 |
-| Scale | **$750/mes** | 30 | 15 | ~$22 |
+| Plan | Precio | Videos | Static ads | $/video | $/static |
+|---|---|---|---|---|---|
+| Esencial | **$350/mes** | 10 | 5 | $32 | $6 |
+| **Pro** (destacado) | **$550/mes** | 20 | 10 | $25 | $5 |
+| Scale | **$750/mes** | 30 | 15 | $23 | $4 |
 
 - Los tres incluyen **estrategia completa** (análisis + funnel TOFU 50% · MOFU 30% · BOFU 20%).
-- Personalizable: video extra **$28** c/u, static extra **$6** c/u.
+- Cada plan define su **valor por pieza** (`vUnit`/`sUnit`), que baja al subir de plan y se
+  muestra en la tarjeta. El precio del plan = `videos × vUnit + statics × sUnit`.
+- **Personalizar:** las piezas extra se cobran a la **tarifa del plan elegido** (p. ej. en
+  Scale, video extra $23 y static extra $4).
 - Es el **mejor precio por pieza** del catálogo (mayoreo mensual).
 
 ### Paquetes por servicio (retail, à la carte)

@@ -203,6 +203,7 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; }
   content: ""; position: absolute; left: 4px; top: 8px; width: 4px; height: 6px;
   border: solid var(--green); border-width: 0 2px 2px 0; transform: rotate(45deg);
 }
+.tier__unit { color: var(--muted); font-weight: 400; font-size: 12.5px; white-space: nowrap; }
 .tier__pick {
   margin-top: 12px; text-align: center; font-size: 13px; font-weight: 700;
   padding: 10px; border-radius: 10px; color: var(--ink);
@@ -213,7 +214,11 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; }
 
 /* ---------- PRESETS (paquetes por servicio) ---------- */
 .presets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
-@media (max-width: 420px) { .presets { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 520px) {
+  .presets { grid-template-columns: 1fr 1fr; }
+  /* Si hay 3 packs, el último ocupa el ancho completo (evita el hueco impar) */
+  .presets .preset:nth-child(3):last-child { grid-column: 1 / -1; }
+}
 .preset {
   position: relative; cursor: pointer; font-family: var(--sans); text-align: center;
   color: var(--ink);
