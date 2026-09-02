@@ -26,7 +26,8 @@ const PLAN = {
   },
   servicios: {
     video: {
-      precio: 50, paso: 1, presets: [5, 10, 15], destacado: 10,
+      // Hasta 4 videos: $49 c/u (precio individual, sin descuento). Desde 5, packs con descuento.
+      precio: 49, paso: 1, presets: [1, 5, 10, 15], destacado: 10,
       // 5→15% · 10→35% · 15→42%
       desc: (v) => v < 5 ? 0 : v < 10 ? 0.15 : v < 15 ? 0.35 : 0.42,
     },
@@ -84,19 +85,21 @@ const I18N = {
     "tabs.despliegue.badge": "Mejor precio-beneficio",
     "tabs.servicios.title": "Paquetes por servicio",
     "tabs.servicios.desc": "Videos, static ads y edición pro, sueltos",
+    "tabs.servicios.badge": "Cotiza creativos por individual",
     "panelA.personaliza.title": "Personaliza tu plan",
     "panelA.personaliza.opcional": "Opcional",
     "panelA.personaliza.desc": "¿Necesitas más volumen? Suma piezas extra a tu plan mensual.",
     "panelA.counter.videos": "Videos extra",
     "panelA.counter.static": "Static ads extra",
-    "panelA.funnel.title": "Distribución por funnel",
-    "panelA.funnel.desc": (n) => `Repartimos tus <strong>${n}</strong> piezas en las tres etapas del embudo.`,
+    "panelA.funnel.title": "Distribución por funnel de anuncios",
+    "panelA.funnel.desc": (n) => `Repartimos tus <strong>${n}</strong> piezas en las tres etapas del embudo de anuncios.`,
+    "panelA.funnel.caption": "Los porcentajes del funnel son fijos (50% TOFU · 30% MOFU · 20% BOFU); solo cambia la cantidad de piezas según tu plan.",
     "funnel.tofu_desc": "· descubrimiento",
     "funnel.mofu_desc": "· consideración",
     "funnel.bofu_desc": "· conversión",
     "summary.eyebrow": "Tu plan mensual",
     "summary.included1": "Análisis de audiencia + producto",
-    "summary.included2": "Estrategia de funnel TOFU · MOFU · BOFU",
+    "summary.included2": "Estrategia de funnel de anuncios TOFU · MOFU · BOFU",
     "summary.pill_incluido": "Incluido",
     "summary.plan_label": "Plan",
     "summary.total_mensual": "Total mensual",
@@ -127,10 +130,11 @@ const I18N = {
     "footer.manifesto": "No gestionamos <em>redes</em>. Construimos <em>máquinas de venta</em> de e-commerce rentables. Con datos, no con <em>intuición</em>.",
     "footer.legal": "Ecom Labs Studio™ · Documento informativo · © 2026 Coral Business Ecosystem LLC",
     "tier.badge_popular": "Más popular",
-    "tier.included": "Estrategia + funnel incluida",
+    "tier.included": "Estrategia + funnel de anuncios incluida",
     "tier.pick": "Elegir",
     "service.personaliza_cantidad": "Personaliza la cantidad",
     "service.pack": "Pack",
+    "service.individual_label": "1 video (individual)",
     "service.quitar": "Quitar",
     "service.agregar": "Agregar",
     "service.cantidad_de": "Cantidad de",
@@ -139,7 +143,7 @@ const I18N = {
     "note.static": (money) => `${money} c/u · bloques de 5`,
     "msg.despliegue.saludo": "Hola Ecom Labs 👋 Quiero contratar el DESPLIEGUE CREATIVO:",
     "msg.despliegue.plan": (n, p) => `🚀 Plan: ${n} — ${p}/mes`,
-    "msg.despliegue.incluye": "✅ Incluye análisis de audiencia/producto + estrategia de funnel",
+    "msg.despliegue.incluye": "✅ Incluye análisis de audiencia/producto + estrategia de funnel de anuncios",
     "msg.despliegue.videos": (total, base, extra) => `🎬 Videos 15–30 s: ${total}` + (extra ? ` (${base} + ${extra} extra)` : ""),
     "msg.despliegue.statics": (total, base, extra) => `🖼️ Static ads: ${total}` + (extra ? ` (${base} + ${extra} extra)` : ""),
     "msg.despliegue.funnel": (t, m, b) => `📊 Funnel: TOFU ${t} · MOFU ${m} · BOFU ${b}`,
@@ -159,19 +163,21 @@ const I18N = {
     "tabs.despliegue.badge": "Best value",
     "tabs.servicios.title": "Service packages",
     "tabs.servicios.desc": "Videos, static ads and pro editing, à la carte",
+    "tabs.servicios.badge": "Quote creatives individually",
     "panelA.personaliza.title": "Customize your plan",
     "panelA.personaliza.opcional": "Optional",
     "panelA.personaliza.desc": "Need more volume? Add extra pieces to your monthly plan.",
     "panelA.counter.videos": "Extra videos",
     "panelA.counter.static": "Extra static ads",
-    "panelA.funnel.title": "Funnel distribution",
-    "panelA.funnel.desc": (n) => `We split your <strong>${n}</strong> pieces across the three funnel stages.`,
+    "panelA.funnel.title": "Ad funnel distribution",
+    "panelA.funnel.desc": (n) => `We split your <strong>${n}</strong> pieces across the three stages of the ad funnel.`,
+    "panelA.funnel.caption": "The funnel percentages are fixed (50% TOFU · 30% MOFU · 20% BOFU); only the number of pieces changes with your plan.",
     "funnel.tofu_desc": "· awareness",
     "funnel.mofu_desc": "· consideration",
     "funnel.bofu_desc": "· conversion",
     "summary.eyebrow": "Your monthly plan",
     "summary.included1": "Audience + product analysis",
-    "summary.included2": "TOFU · MOFU · BOFU funnel strategy",
+    "summary.included2": "TOFU · MOFU · BOFU ad funnel strategy",
     "summary.pill_incluido": "Included",
     "summary.plan_label": "Plan",
     "summary.total_mensual": "Total per month",
@@ -202,10 +208,11 @@ const I18N = {
     "footer.manifesto": "We don't manage social media. We build profitable e-commerce <em>sales machines</em>. With data, not <em>intuition</em>.",
     "footer.legal": "Ecom Labs Studio™ · Informational document · © 2026 Coral Business Ecosystem LLC",
     "tier.badge_popular": "Most popular",
-    "tier.included": "Strategy + funnel included",
+    "tier.included": "Ad funnel strategy included",
     "tier.pick": "Select",
     "service.personaliza_cantidad": "Customize quantity",
     "service.pack": "Pack",
+    "service.individual_label": "1 video (single)",
     "service.quitar": "Remove",
     "service.agregar": "Add",
     "service.cantidad_de": "Quantity of",
@@ -214,7 +221,7 @@ const I18N = {
     "note.static": (money) => `${money} each · blocks of 5`,
     "msg.despliegue.saludo": "Hi Ecom Labs 👋 I want to hire the CREATIVE DEPLOYMENT:",
     "msg.despliegue.plan": (n, p) => `🚀 Plan: ${n} — ${p}/mo`,
-    "msg.despliegue.incluye": "✅ Includes audience/product analysis + funnel strategy",
+    "msg.despliegue.incluye": "✅ Includes audience/product analysis + ad funnel strategy",
     "msg.despliegue.videos": (total, base, extra) => `🎬 15–30s videos: ${total}` + (extra ? ` (${base} + ${extra} extra)` : ""),
     "msg.despliegue.statics": (total, base, extra) => `🖼️ Static ads: ${total}` + (extra ? ` (${base} + ${extra} extra)` : ""),
     "msg.despliegue.funnel": (t, m, b) => `📊 Funnel: TOFU ${t} · MOFU ${m} · BOFU ${b}`,
@@ -334,7 +341,7 @@ function initDespliegue() {
     const r = repartoFunnel(cfg.funnel, piezas);
     const max = Math.max(r.tofu, r.mofu, r.bofu, 1);
     ["tofu", "mofu", "bofu"].forEach(k => {
-      $(`[data-funnel="${k}"]`, root).textContent = r[k];
+      $$(`[data-funnel="${k}"]`, root).forEach(el => el.textContent = r[k]);
       $(`[data-funnel-bar="${k}"]`, root).style.width = (r[k] / max * 100) + "%";
     });
     $$('[data-d-pieces]', root).forEach(el => el.textContent = piezas);
@@ -412,8 +419,9 @@ function initServicios() {
       const presets = c.presets.map(p => {
         const pr = precioServicio(c, p);
         const star = p === c.destacado ? ' preset--star' : "";
+        const label = p === 1 ? esc(t("service.individual_label")) : `${esc(t("service.pack"))} ${p}`;
         return `<button class="preset${star}" data-cat="${key}" data-qty="${p}">
-          <span class="preset__n">${esc(t("service.pack"))} ${p}</span>
+          <span class="preset__n">${label}</span>
           <span class="preset__p">${money(pr.neto)}</span>
           <span class="preset__u">${money(pr.unit)} ${esc(t("unit.cu"))}${pr.desc ? " · " + pctTxt(pr.desc) : ""}</span>
         </button>`;

@@ -49,6 +49,7 @@
         <span class="tab__badge" data-i18n="tabs.despliegue.badge">Mejor precio-beneficio</span>
       </button>
       <button class="tab" data-tab="servicios" role="tab" aria-selected="false">
+        <span class="tab__badge tab__badge--alt" data-i18n="tabs.servicios.badge">Cotiza creativos por individual</span>
         <span class="tab__title" data-i18n="tabs.servicios.title">Paquetes por servicio</span>
         <span class="tab__desc" data-i18n="tabs.servicios.desc">Videos, static ads y edición pro, sueltos</span>
       </button>
@@ -97,9 +98,22 @@
 
           <div class="card">
             <div class="card__head">
-              <h2 data-i18n="panelA.funnel.title">Distribución por funnel</h2>
+              <h2 data-i18n="panelA.funnel.title">Distribución por funnel de anuncios</h2>
               <p class="muted" data-funnel-desc>Repartimos tus <strong data-d-pieces></strong> piezas en las tres etapas del embudo.</p>
             </div>
+
+            <div class="funnel-graphic" aria-hidden="true">
+              <svg viewBox="0 0 320 210" class="funnel-svg">
+                <polygon class="fg-tofu" points="8,8 312,8 250,64 70,64" />
+                <polygon class="fg-mofu" points="72,70 248,70 190,124 130,124" />
+                <polygon class="fg-bofu" points="132,130 188,130 174,184 146,184" />
+                <text x="160" y="40" class="fg-text">TOFU · <tspan data-funnel="tofu">0</tspan></text>
+                <text x="160" y="100" class="fg-text">MOFU · <tspan data-funnel="mofu">0</tspan></text>
+                <text x="160" y="160" class="fg-text fg-text--sm">BOFU · <tspan data-funnel="bofu">0</tspan></text>
+              </svg>
+            </div>
+            <p class="funnel-caption" data-i18n="panelA.funnel.caption">Los porcentajes del funnel son fijos (50% TOFU · 30% MOFU · 20% BOFU); solo cambia la cantidad de piezas según tu plan.</p>
+
             <div class="funnel">
               <div class="funnel__row">
                 <div class="funnel__label"><span class="dot dot--tofu"></span> TOFU <span class="muted" data-i18n="funnel.tofu_desc">· descubrimiento</span></div>
