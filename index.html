@@ -8,7 +8,7 @@
   <link rel="icon" href="assets/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -18,33 +18,39 @@
     <a class="nav__logo" href="#top" aria-label="Ecom Labs Studio">
       <img src="assets/logo.png" alt="Ecom Labs Studio" />
     </a>
-    <a class="btn btn--ghost" href="#cotizador">
-      Agendar
-      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15.5 15.5 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25c1.1.37 2.3.57 3.6.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.3.2 2.5.57 3.6a1 1 0 0 1-.25 1z"/></svg>
-    </a>
+    <div class="nav__right">
+      <div class="langsw" data-langsw role="group" aria-label="Idioma / Language">
+        <button class="langsw__btn is-active" data-lang="es" aria-pressed="true">ES</button>
+        <button class="langsw__btn" data-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <a class="btn btn--ghost" href="#cotizador">
+        <span data-i18n="nav.agenda">Agendar</span>
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15.5 15.5 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25c1.1.37 2.3.57 3.6.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.3.2 2.5.57 3.6a1 1 0 0 1-.25 1z"/></svg>
+      </a>
+    </div>
   </header>
 
   <!-- ===== HERO ===== -->
   <section class="hero" id="top">
-    <span class="eyebrow">Despliegue creativo para Ads</span>
-    <h1 class="hero__title">
+    <span class="eyebrow" data-i18n="hero.eyebrow">Despliegue creativo para Ads</span>
+    <h1 class="hero__title" data-i18n-html="hero.title">
       Cotiza tu <em>máquina</em> de creativos<br />
       para <em>Meta</em> y <em>TikTok</em>.
     </h1>
-    <p class="hero__sub">
+    <p class="hero__sub" data-i18n="hero.sub">
       Análisis de audiencia y producto + una serie de piezas de video y static ads
       para cada etapa del funnel. Elige tu paquete y personalízalo.
     </p>
 
     <div class="tabs" role="tablist" aria-label="Tipo de cotización">
       <button class="tab is-active" data-tab="despliegue" role="tab" aria-selected="true">
-        <span class="tab__title">Despliegue creativo</span>
-        <span class="tab__desc">Plan mensual · estrategia + volumen</span>
-        <span class="tab__badge">Mejor precio-beneficio</span>
+        <span class="tab__title" data-i18n="tabs.despliegue.title">Despliegue creativo</span>
+        <span class="tab__desc" data-i18n="tabs.despliegue.desc">Plan mensual · estrategia + volumen</span>
+        <span class="tab__badge" data-i18n="tabs.despliegue.badge">Mejor precio-beneficio</span>
       </button>
       <button class="tab" data-tab="servicios" role="tab" aria-selected="false">
-        <span class="tab__title">Paquetes por servicio</span>
-        <span class="tab__desc">Videos, static ads y edición pro, sueltos</span>
+        <span class="tab__title" data-i18n="tabs.servicios.title">Paquetes por servicio</span>
+        <span class="tab__desc" data-i18n="tabs.servicios.desc">Videos, static ads y edición pro, sueltos</span>
       </button>
     </div>
   </section>
@@ -62,12 +68,12 @@
 
           <div class="card">
             <div class="card__head">
-              <h2>Personaliza tu plan <span class="tag tag--soft">Opcional</span></h2>
-              <p class="muted">¿Necesitas más volumen? Suma piezas extra a tu plan mensual.</p>
+              <h2><span data-i18n="panelA.personaliza.title">Personaliza tu plan</span> <span class="tag tag--soft" data-i18n="panelA.personaliza.opcional">Opcional</span></h2>
+              <p class="muted" data-i18n="panelA.personaliza.desc">¿Necesitas más volumen? Suma piezas extra a tu plan mensual.</p>
             </div>
             <div class="counter">
               <div class="counter__info">
-                <span class="counter__name">Videos extra</span>
+                <span class="counter__name" data-i18n="panelA.counter.videos">Videos extra</span>
                 <span class="counter__note" data-extra-note="video"></span>
               </div>
               <div class="stepper" data-stepper="extraVideo">
@@ -78,7 +84,7 @@
             </div>
             <div class="counter">
               <div class="counter__info">
-                <span class="counter__name">Static ads extra</span>
+                <span class="counter__name" data-i18n="panelA.counter.static">Static ads extra</span>
                 <span class="counter__note" data-extra-note="static"></span>
               </div>
               <div class="stepper" data-stepper="extraStatic">
@@ -91,22 +97,22 @@
 
           <div class="card">
             <div class="card__head">
-              <h2>Distribución por funnel</h2>
-              <p class="muted">Repartimos tus <strong data-d-pieces></strong> piezas en las tres etapas del embudo.</p>
+              <h2 data-i18n="panelA.funnel.title">Distribución por funnel</h2>
+              <p class="muted" data-funnel-desc>Repartimos tus <strong data-d-pieces></strong> piezas en las tres etapas del embudo.</p>
             </div>
             <div class="funnel">
               <div class="funnel__row">
-                <div class="funnel__label"><span class="dot dot--tofu"></span> TOFU <span class="muted">· descubrimiento</span></div>
+                <div class="funnel__label"><span class="dot dot--tofu"></span> TOFU <span class="muted" data-i18n="funnel.tofu_desc">· descubrimiento</span></div>
                 <div class="funnel__bar"><span data-funnel-bar="tofu"></span></div>
                 <div class="funnel__qty" data-funnel="tofu">0</div>
               </div>
               <div class="funnel__row">
-                <div class="funnel__label"><span class="dot dot--mofu"></span> MOFU <span class="muted">· consideración</span></div>
+                <div class="funnel__label"><span class="dot dot--mofu"></span> MOFU <span class="muted" data-i18n="funnel.mofu_desc">· consideración</span></div>
                 <div class="funnel__bar"><span data-funnel-bar="mofu"></span></div>
                 <div class="funnel__qty" data-funnel="mofu">0</div>
               </div>
               <div class="funnel__row">
-                <div class="funnel__label"><span class="dot dot--bofu"></span> BOFU <span class="muted">· conversión</span></div>
+                <div class="funnel__label"><span class="dot dot--bofu"></span> BOFU <span class="muted" data-i18n="funnel.bofu_desc">· conversión</span></div>
                 <div class="funnel__bar"><span data-funnel-bar="bofu"></span></div>
                 <div class="funnel__qty" data-funnel="bofu">0</div>
               </div>
@@ -116,33 +122,33 @@
 
         <aside class="summary">
           <div class="summary__card">
-            <span class="eyebrow eyebrow--light">Tu plan mensual</span>
+            <span class="eyebrow eyebrow--light" data-i18n="summary.eyebrow">Tu plan mensual</span>
             <ul class="lines">
-              <li class="line line--included"><span>Análisis de audiencia + producto</span><span class="pill">Incluido</span></li>
-              <li class="line line--included"><span>Estrategia de funnel TOFU · MOFU · BOFU</span><span class="pill">Incluido</span></li>
+              <li class="line line--included"><span data-i18n="summary.included1">Análisis de audiencia + producto</span><span class="pill" data-i18n="summary.pill_incluido">Incluido</span></li>
+              <li class="line line--included"><span data-i18n="summary.included2">Estrategia de funnel TOFU · MOFU · BOFU</span><span class="pill" data-i18n="summary.pill_incluido">Incluido</span></li>
               <li class="line">
-                <span class="line__label"><span class="line__name">Plan <b data-d-tier>Pro</b></span></span>
+                <span class="line__label"><span class="line__name"><span data-i18n="summary.plan_label">Plan</span> <b data-d-tier>Pro</b></span></span>
                 <span class="amt" data-d-price>$550</span>
               </li>
-              <li class="line line--sub"><span><b data-d-videos>20</b> videos 15–30 s · <span data-d-vunit>$25</span> c/u</span><span></span></li>
-              <li class="line line--sub"><span><b data-d-statics>10</b> static ads · <span data-d-sunit>$5</span> c/u</span><span></span></li>
+              <li class="line line--sub"><span><b data-d-videos>20</b> <span data-i18n="unit.videos_label">videos 15–30 s</span> · <span data-d-vunit>$25</span> <span data-i18n="unit.cu">c/u</span></span><span></span></li>
+              <li class="line line--sub"><span><b data-d-statics>10</b> <span data-i18n="unit.static_label">static ads</span> · <span data-d-sunit>$5</span> <span data-i18n="unit.cu">c/u</span></span><span></span></li>
               <li class="line" data-d-line="extraVideo" hidden>
-                <span class="line__label"><span class="line__name"><b data-d-xqty="video">0</b> videos extra</span></span>
+                <span class="line__label"><span class="line__name"><b data-d-xqty="video">0</b> <span data-i18n="unit.videos_extra">videos extra</span></span></span>
                 <span class="amt" data-d-amount="extraVideo">$0</span>
               </li>
               <li class="line" data-d-line="extraStatic" hidden>
-                <span class="line__label"><span class="line__name"><b data-d-xqty="static">0</b> static ads extra</span></span>
+                <span class="line__label"><span class="line__name"><b data-d-xqty="static">0</b> <span data-i18n="unit.static_extra">static ads extra</span></span></span>
                 <span class="amt" data-d-amount="extraStatic">$0</span>
               </li>
             </ul>
             <div class="total">
-              <span>Total mensual</span>
-              <strong><span data-d-total>$550</span><small class="total__mo">/mes</small></strong>
+              <span data-i18n="summary.total_mensual">Total mensual</span>
+              <strong><span data-d-total>$550</span><small class="total__mo" data-i18n="unit.mo">/mes</small></strong>
             </div>
-            <p class="perpiece"><b data-d-vunit>$25</b>/video · <b data-d-sunit>$5</b>/static · <span data-d-pieces></span> piezas</p>
+            <p class="perpiece"><b data-d-vunit>$25</b><span data-i18n="unit.slash_video">/video</span> · <b data-d-sunit>$5</b><span data-i18n="unit.slash_static">/static</span> · <span data-d-pieces></span> <span data-i18n="unit.piezas">piezas</span></p>
             <a class="btn btn--cta" href="#" data-cta>
               <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M17.5 14.4c-.3-.15-1.7-.85-2-.95-.26-.1-.45-.15-.64.15-.19.28-.73.94-.9 1.13-.16.19-.33.21-.62.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.29-.02-.45.13-.6.14-.13.3-.34.44-.51.15-.17.2-.29.3-.48.1-.19.05-.36-.02-.51-.08-.15-.64-1.55-.88-2.12-.23-.55-.47-.48-.64-.49h-.55c-.19 0-.5.07-.76.36-.26.29-1 .98-1 2.38 0 1.4 1.02 2.76 1.17 2.95.14.19 2.01 3.08 4.88 4.32.68.29 1.21.47 1.63.6.68.22 1.31.19 1.8.11.55-.08 1.7-.69 1.94-1.36.24-.67.24-1.24.17-1.36-.07-.12-.26-.19-.55-.34zM12 2A10 10 0 0 0 3.5 17.2L2 22l4.9-1.5A10 10 0 1 0 12 2z"/></svg>
-              Realizar pedido
+              <span data-i18n="cta.pedido">Realizar pedido</span>
             </a>
           </div>
         </aside>
@@ -160,30 +166,30 @@
 
         <aside class="summary">
           <div class="summary__card">
-            <span class="eyebrow eyebrow--light">Tu pedido</span>
-            <p class="summary__note">Paquetes sueltos · no incluye análisis ni estrategia de funnel.</p>
+            <span class="eyebrow eyebrow--light" data-i18n="summary2.eyebrow">Tu pedido</span>
+            <p class="summary__note" data-i18n="summary2.note">Paquetes sueltos · no incluye análisis ni estrategia de funnel.</p>
             <ul class="lines">
               <li class="line" data-s-line="video" hidden>
-                <span class="line__label"><span class="line__name"><b data-s-qty="video">0</b> videos 15–30 s</span><small class="line__unit" data-s-unit="video"></small></span>
+                <span class="line__label"><span class="line__name"><b data-s-qty="video">0</b> <span data-i18n="unit.videos_label">videos 15–30 s</span></span><small class="line__unit" data-s-unit="video"></small></span>
                 <span class="amt" data-s-amount="video">$0</span>
               </li>
               <li class="line" data-s-line="static" hidden>
-                <span class="line__label"><span class="line__name"><b data-s-qty="static">0</b> static ads</span><small class="line__unit" data-s-unit="static"></small></span>
+                <span class="line__label"><span class="line__name"><b data-s-qty="static">0</b> <span data-i18n="unit.static_label">static ads</span></span><small class="line__unit" data-s-unit="static"></small></span>
                 <span class="amt" data-s-amount="static">$0</span>
               </li>
               <li class="line" data-s-line="edicion" hidden>
-                <span class="line__label"><span class="line__name"><b data-s-qty="edicion">0</b> ediciones pro</span><small class="line__unit" data-s-unit="edicion"></small></span>
+                <span class="line__label"><span class="line__name"><b data-s-qty="edicion">0</b> <span data-i18n="unit.ediciones_label">ediciones pro</span></span><small class="line__unit" data-s-unit="edicion"></small></span>
                 <span class="amt" data-s-amount="edicion">$0</span>
               </li>
             </ul>
-            <p class="hint" data-s-empty>Elige un paquete o personaliza cantidades para cotizar.</p>
+            <p class="hint" data-s-empty data-i18n="summary2.empty_hint">Elige un paquete o personaliza cantidades para cotizar.</p>
             <div class="total">
-              <span>Total</span>
+              <span data-i18n="summary2.total">Total</span>
               <strong data-s-total>$0</strong>
             </div>
             <a class="btn btn--cta" href="#" data-cta>
               <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M17.5 14.4c-.3-.15-1.7-.85-2-.95-.26-.1-.45-.15-.64.15-.19.28-.73.94-.9 1.13-.16.19-.33.21-.62.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.29-.02-.45.13-.6.14-.13.3-.34.44-.51.15-.17.2-.29.3-.48.1-.19.05-.36-.02-.51-.08-.15-.64-1.55-.88-2.12-.23-.55-.47-.48-.64-.49h-.55c-.19 0-.5.07-.76.36-.26.29-1 .98-1 2.38 0 1.4 1.02 2.76 1.17 2.95.14.19 2.01 3.08 4.88 4.32.68.29 1.21.47 1.63.6.68.22 1.31.19 1.8.11.55-.08 1.7-.69 1.94-1.36.24-.67.24-1.24.17-1.36-.07-.12-.26-.19-.55-.34zM12 2A10 10 0 0 0 3.5 17.2L2 22l4.9-1.5A10 10 0 1 0 12 2z"/></svg>
-              Realizar pedido
+              <span data-i18n="cta.pedido">Realizar pedido</span>
             </a>
           </div>
         </aside>
@@ -193,36 +199,36 @@
 
     <!-- ===== QUÉ INCLUYE (compartido) ===== -->
     <section class="includes">
-      <span class="eyebrow">Qué es un despliegue creativo</span>
-      <h2 class="includes__title">No son <em>piezas sueltas</em>. Es un sistema para testear y escalar.</h2>
+      <span class="eyebrow" data-i18n="includes.eyebrow">Qué es un despliegue creativo</span>
+      <h2 class="includes__title" data-i18n-html="includes.title">No son <em>piezas sueltas</em>. Es un sistema para testear y escalar.</h2>
       <div class="includes__grid">
         <article class="feature">
           <div class="feature__num">01</div>
-          <h3>Análisis previo</h3>
-          <p>Estudiamos tu audiencia, tu producto o servicio y a tu competencia para detectar los ángulos que realmente convierten.</p>
+          <h3 data-i18n="includes.f1.title">Análisis previo</h3>
+          <p data-i18n="includes.f1.desc">Estudiamos tu audiencia, tu producto o servicio y a tu competencia para detectar los ángulos que realmente convierten.</p>
         </article>
         <article class="feature">
           <div class="feature__num">02</div>
-          <h3>Volumen con calidad</h3>
-          <p>Video apalancado con IA (15–30 s) y static ads en múltiples formatos, con edición básica lista para salir a testear.</p>
+          <h3 data-i18n="includes.f2.title">Volumen con calidad</h3>
+          <p data-i18n="includes.f2.desc">Video apalancado con IA (15–30 s) y static ads en múltiples formatos, con edición básica lista para salir a testear.</p>
         </article>
         <article class="feature">
           <div class="feature__num">03</div>
-          <h3>Posproducción pro</h3>
-          <p>Cuando quieres subir el valor percibido: motion graphics, subtítulos premium, b-rolls y efectos de sonido y visuales.</p>
+          <h3 data-i18n="includes.f3.title">Posproducción pro</h3>
+          <p data-i18n="includes.f3.desc">Cuando quieres subir el valor percibido: motion graphics, subtítulos premium, b-rolls y efectos de sonido y visuales.</p>
         </article>
       </div>
     </section>
   </main>
 
   <footer class="footer">
-    <span class="eyebrow eyebrow--light">Nuestro manifiesto</span>
-    <p class="manifesto">
+    <span class="eyebrow eyebrow--light" data-i18n="footer.eyebrow">Nuestro manifiesto</span>
+    <p class="manifesto" data-i18n-html="footer.manifesto">
       No gestionamos <em>redes</em>. Construimos <em>máquinas de venta</em>
       de e-commerce rentables. Con datos, no con <em>intuición</em>.
     </p>
     <img class="footer__logo" src="assets/logo.png" alt="Ecom Labs Studio" />
-    <p class="footer__legal">Ecom Labs Studio™ · Documento informativo · © 2026 Coral Business Ecosystem LLC</p>
+    <p class="footer__legal" data-i18n="footer.legal">Ecom Labs Studio™ · Documento informativo · © 2026 Coral Business Ecosystem LLC</p>
   </footer>
 
   <script src="script.js"></script>
