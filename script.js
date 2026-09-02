@@ -37,7 +37,8 @@ const PLAN = {
       desc: (s) => s < 20 ? 0 : s < 30 ? 0.15 : 0.25,
     },
     edicion: {
-      precio: 40, paso: 1, presets: [5, 10], destacado: 10,
+      // 1 edición individual (sin descuento) + packs con descuento por volumen.
+      precio: 40, paso: 1, presets: [1, 5, 10], destacado: 10,
       // 5→20% · 10→30%
       desc: (e) => e < 5 ? 0 : e < 10 ? 0.20 : 0.30,
     },
@@ -134,7 +135,8 @@ const I18N = {
     "tier.pick": "Elegir",
     "service.personaliza_cantidad": "Personaliza la cantidad",
     "service.pack": "Pack",
-    "service.individual_label": "1 video (individual)",
+    "service.individual_video": "1 video (individual)",
+    "service.individual_edicion": "1 edición (individual)",
     "service.quitar": "Quitar",
     "service.agregar": "Agregar",
     "service.cantidad_de": "Cantidad de",
@@ -212,7 +214,8 @@ const I18N = {
     "tier.pick": "Select",
     "service.personaliza_cantidad": "Customize quantity",
     "service.pack": "Pack",
-    "service.individual_label": "1 video (single)",
+    "service.individual_video": "1 video (single)",
+    "service.individual_edicion": "1 edit (single)",
     "service.quitar": "Remove",
     "service.agregar": "Add",
     "service.cantidad_de": "Quantity of",
@@ -419,7 +422,8 @@ function initServicios() {
       const presets = c.presets.map(p => {
         const pr = precioServicio(c, p);
         const star = p === c.destacado ? ' preset--star' : "";
-        const label = p === 1 ? esc(t("service.individual_label")) : `${esc(t("service.pack"))} ${p}`;
+        const individualKey = { video: "service.individual_video", edicion: "service.individual_edicion" }[key];
+        const label = (p === 1 && individualKey) ? esc(t(individualKey)) : `${esc(t("service.pack"))} ${p}`;
         return `<button class="preset${star}" data-cat="${key}" data-qty="${p}">
           <span class="preset__n">${label}</span>
           <span class="preset__p">${money(pr.neto)}</span>
